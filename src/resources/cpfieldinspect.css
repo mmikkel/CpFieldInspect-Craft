@@ -1,0 +1,156 @@
+.cpFieldInspect {
+    width: auto;
+    height: 13px;
+    float: right;
+    position: relative;
+    margin: 0 0 12px;
+    z-index: 2;
+    box-sizing: border-box;
+}
+
+.elementeditor .cpFieldInspect {
+    float: left;
+    margin-right: 100%;
+}
+
+.elementeditor .cpFieldInspect::before {
+    content: "";
+    display: block;
+    width: 100%;
+}
+
+.matrixblock .cpFieldInspect {
+    float: right;
+    margin-right: 0;
+}
+
+.matrixblock .cpFieldInspect::before {
+    content: none;
+    display: none;
+}
+
+.cpFieldInspect-settings {
+    width: auto;
+    float: left;
+    position: relative;
+    z-index: 2;
+}
+
+.cpFieldInspect-settings a {
+    opacity: .25;
+    transition: opacity .25s ease-out;
+}
+
+.cpFieldInspect-settings a:hover {
+    opacity: 1;
+}
+
+.cpFieldInspect-info {
+    width: auto;
+    float: left;
+}
+
+.cpFieldInspect-info p {
+    margin: 0;
+}
+
+.cpFieldInspect-info code,
+.cpFieldInspect-info span {
+    display: inline-block;
+    padding: 0 4px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.cpFieldInspect-info code {
+    color: #8f98a3;
+    background-color: #EBEDEF;
+    border-radius: 3px;
+}
+
+.cpFieldInspect-sourceEdit {
+    float: left;
+    width: 100%;
+    margin: 15px 0 20px;
+}
+
+.cpFieldInspect-sourceEdit .cpFieldInspect-wrapper {
+    width: auto;
+    float: left;
+}
+
+.cpFieldInspect-sourceEdit .cpFieldInspect-wrapper::before,
+.cpFieldInspect-sourceEdit .cpFieldInspect-wrapper::after {
+    content: " ";
+    display: table;
+}
+
+.cpFieldInspect-sourceEdit .cpFieldInspect-wrapper::after {
+    clear: both;
+}
+
+.cpFieldInspect-sourceEdit .cpFieldInspect-wrapper:hover .cpFieldInspect-info {
+    opacity: 1;
+}
+
+.cpFieldInspect-sourceEdit .cpFieldInspect-info {
+    position: absolute;
+    top: 1px;
+    left: 18px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .25s ease-out;
+    color: #8f98a3;
+}
+
+.cpFieldInspect-sourceEdit .cpFieldInspect-settings a {
+    opacity: .5;
+}
+
+.cpFieldInspect-sourceEdit .cpFieldInspect-settings a:hover {
+    opacity: 1;
+}
+
+.cpFieldInspect-fieldEdit p {
+    transform: translate(0, 0) scale(.75, .75);
+    transform-origin: center right;
+    opacity: 0;
+    transition: opacity .1s ease-in, transform .15s ease-out;
+}
+
+.cpFieldInspect-fieldEdit .cpFieldInspect-info {
+    pointer-events: none;
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 1;
+}
+
+.elementeditor .cpFieldInspect-fieldEdit .cpFieldInspect-info {
+    right: auto;
+    left: 0;
+}
+
+.matrixblock .cpFieldInspect-fieldEdit .cpFieldInspect-info {
+    right: 0;
+    left: auto;
+}
+
+.cpFieldInspect-fieldEdit .cpFieldInspect-settings a::before {
+    color: #000;
+}
+
+.elementeditor .cpFieldInspect-fieldEdit:hover p {
+    transform: translate(20px, 0) scale(1, 1);
+}
+
+.cpFieldInspect-fieldEdit:hover p,
+.matrixblock .cpFieldInspect-fieldEdit:hover p {
+    opacity: 1;
+    transform: translate(-20px, 0) scale(1, 1);
+}
+
+.cpFieldInspect-fieldEdit:hover .cpFieldInspect-info,
+.matrixblock .cpFieldInspect-fieldEdit:hover .cpFieldInspect-info {
+    pointer-events: auto;
+}
