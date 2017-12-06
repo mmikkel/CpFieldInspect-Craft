@@ -12,9 +12,13 @@ Note that CP Field Inspect will only be active for **admin** users.
 
 ![Easily inspect field handles and edit fields](http://g.recordit.co/i8SOUKWYpq.gif)
 
+Plugin icon: CUSTOMIZE SEARCH by creative outlet from [the Noun Project](https://thenounproject.com)
+
 ## Requirements
 
 This plugin requires Craft CMS 3.0.0-beta.23 or later.
+
+Tested and working w/ Craft CMS 3 RC1 (3.0.0.-beta.29).
 
 ## Installation
 

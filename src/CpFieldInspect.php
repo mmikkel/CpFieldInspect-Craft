@@ -34,6 +34,9 @@ use yii\base\Event;
  * @package   CpFieldInspect
  * @since     1.0.0
  *
+ *
+ * Plugin icon credit: CUSTOMIZE SEARCH by creative outlet from the Noun Project
+ *
  */
 class CpFieldInspect extends Plugin
 {
