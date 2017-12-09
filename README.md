@@ -12,7 +12,9 @@ Note that CP Field Inspect will only be active for **admin** users.
 
 ![Easily inspect field handles and edit fields](http://g.recordit.co/i8SOUKWYpq.gif)
 
-Plugin icon: CUSTOMIZE SEARCH by creative outlet from [the Noun Project](https://thenounproject.com)
+Plugin icon: CUSTOMIZE SEARCH by creative outlet from [the Noun Project](https://thenounproject.com)  
+
+Looking for the Craft 2 version? [It's right here](https://github.com/mmikkel/CpFieldLinks-Craft).
 
 ## Requirements
 
@@ -34,7 +36,13 @@ To install the plugin, follow these instructions.
 
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for CP Field Inspect.
 
+## Disclaimer
 
+This plugin is provided free of charge and you can do whatever you want with it. CP Field Inspect is _very_ unlikely to mess up your stuff, but just to be clear: the author is not responsible for data loss or any other problems resulting from the use of this plugin.
+
+Please report any bugs, feature requests or other issues [here](https://github.com/mmikkel/CpFieldInspect-Craft/issues). Note that this is a hobby project and no promises are made regarding response time, feature implementations or bug fixes.
+
+**Pull requests are extremely welcome**
 
 
 
