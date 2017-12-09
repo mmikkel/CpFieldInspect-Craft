@@ -70,17 +70,6 @@ class CpFieldInspect extends Plugin
         parent::init();
         self::$plugin = $this;
 
-        // Do something after we're installed
-        Event::on(
-            Plugins::class,
-            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
-                if ($event->plugin === $this) {
-                    // We were just installed
-                }
-            }
-        );
-
         $user = Craft::$app->getUser();
         $request = Craft::$app->getRequest();
 

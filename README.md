@@ -10,7 +10,7 @@ Additionally, CP Field Inspect will add a link in your element edit forms to man
 
 Note that CP Field Inspect will only be active for **admin** users.  
 
-![Easily inspect field handles and edit fields](http://g.recordit.co/i8SOUKWYpq.gif)
+![Easily inspect field handles and edit fields](resources/img/ihvhsZbIRw.gif)
 
 Plugin icon: CUSTOMIZE SEARCH by creative outlet from [the Noun Project](https://thenounproject.com)  
 
