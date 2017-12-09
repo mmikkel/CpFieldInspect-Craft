@@ -11,8 +11,8 @@
         "cp field inspect"
     ],
     "support": {
-        "docs": "https://github.com/mmikkel/cp-field-inspect/blob/master/README.md",
-        "issues": "https://github.com/mmikkel/cp-field-inspect/issues"
+        "docs": "https://github.com/mmikkel/CpFieldInspect-Craft/blob/master/README.md",
+        "issues": "https://github.com/mmikkel/CpFieldInspect-Craft/issues"
     },
     "license": "MIT",
     "authors": [
@@ -41,7 +41,7 @@
         "schemaVersion": "1.0.0",
         "hasCpSettings": false,
         "hasCpSection": false,
-        "changelogUrl": "https://raw.githubusercontent.com/mmikkel/cp-field-inspect/master/CHANGELOG.md",
+        "changelogUrl": "https://raw.githubusercontent.com/mmikkel/CpFieldInspect-Craft/master/CHANGELOG.md",
         "class": "mmikkel\\cpfieldinspect\\CpFieldInspect"
     }
 }
