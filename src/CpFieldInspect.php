@@ -77,60 +77,14 @@ class CpFieldInspect extends Plugin
             return;
         }
 
-        if ($request->getIsAjax()) {
-
-            if (!$request->getIsPost()) {
-                return false;
+        // Handler: EVENT_AFTER_LOAD_PLUGINS
+        Event::on(
+            Plugins::class,
+            Plugins::EVENT_AFTER_LOAD_PLUGINS,
+            function () {
+                $this->doIt();
             }
-
-            $segments = $request->segments;
-            $actionSegment = $segments[count($segments) - 1];
-
-            if ($actionSegment !== 'get-editor-html') {
-                return false;
-            }
-
-            Craft::$app->getView()->registerJs('Craft.CpFieldInspectPlugin.initElementEditor();');
-
-        } else {
-
-            $data = array(
-                'redirectUrl' => Craft::$app->getSecurity()->hashData(implode('/', $request->segments)),
-                'fields' => array(),
-                'entryTypeIds' => array(),
-                'baseEditFieldUrl' => rtrim(UrlHelper::cpUrl('settings/fields/edit'), '/'),
-                'baseEditEntryTypeUrl' => rtrim(UrlHelper::cpUrl('settings/sections/sectionId/entrytypes'), '/'),
-                'baseEditGlobalSetUrl' => rtrim(UrlHelper::cpUrl('settings/globals'), '/'),
-                'baseEditCategoryGroupUrl' => rtrim(UrlHelper::cpUrl('settings/categories'), '/'),
-                'baseEditCommerceProductTypeUrl' => rtrim(UrlHelper::cpUrl('commerce/settings/producttypes'), '/'),
-            );
-
-            $sectionIds = Craft::$app->sections->allSectionIds;
-            foreach ($sectionIds as $sectionId)
-            {
-                $entryTypes = Craft::$app->sections->getEntryTypesBySectionId($sectionId);
-                $data['entryTypeIds']['' . $sectionId] = array();
-                foreach ($entryTypes as $entryType)
-                {
-                    $data['entryTypeIds']['' . $sectionId][] = $entryType->id;
-                }
-            }
-
-
-            $fields = Craft::$app->fields->allFields;
-
-            foreach ($fields as $field)
-            {
-                $data['fields'][$field->handle] = array(
-                    'id' => $field->id,
-                    'handle' => $field->handle,
-                    //'type' => $field->type,
-                );
-            }
-
-            Craft::$app->getView()->registerAssetBundle(CpFieldInspectBundle::class);
-            Craft::$app->getView()->registerJs('Craft.CpFieldInspectPlugin.init('.json_encode($data).');');
-        }
+        );
 
 /**
  * Logging in Craft involves using one of the following methods:
@@ -162,5 +116,65 @@ class CpFieldInspect extends Plugin
 
     // Protected Methods
     // =========================================================================
+    protected function doIt()
+    {
+
+        $request = Craft::$app->getRequest();
+
+        if ($request->getIsAjax()) {
+
+            if (!$request->getIsPost()) {
+                return false;
+            }
+
+            $segments = $request->segments;
+            $actionSegment = $segments[count($segments) - 1];
+
+            if ($actionSegment !== 'get-editor-html') {
+                return false;
+            }
+
+            Craft::$app->getView()->registerJs('Craft.CpFieldInspectPlugin.initElementEditor();');
+
+        } else {
+
+            $data = array(
+                'redirectUrl' => Craft::$app->getSecurity()->hashData(implode('/', $request->segments)),
+                'fields' => array(),
+                'entryTypeIds' => array(),
+                'baseEditFieldUrl' => rtrim(UrlHelper::cpUrl('settings/fields/edit'), '/'),
+                'baseEditEntryTypeUrl' => rtrim(UrlHelper::cpUrl('settings/sections/sectionId/entrytypes'), '/'),
+                'baseEditGlobalSetUrl' => rtrim(UrlHelper::cpUrl('settings/globals'), '/'),
+                'baseEditCategoryGroupUrl' => rtrim(UrlHelper::cpUrl('settings/categories'), '/'),
+                'baseEditCommerceProductTypeUrl' => rtrim(UrlHelper::cpUrl('commerce/settings/producttypes'), '/'),
+            );
+
+            $sectionIds = Craft::$app->getSections()->getAllSectionIds();
+            foreach ($sectionIds as $sectionId)
+            {
+                $entryTypes = Craft::$app->getSections()->getEntryTypesBySectionId($sectionId);
+                $data['entryTypeIds']['' . $sectionId] = array();
+                foreach ($entryTypes as $entryType)
+                {
+                    $data['entryTypeIds']['' . $sectionId][] = $entryType->id;
+                }
+            }
+
+
+            $fields = Craft::$app->getFields()->getAllFields();
+
+            foreach ($fields as $field)
+            {
+
+                $data['fields'][$field->handle] = array(
+                    'id' => $field->id,
+                    'handle' => $field->handle,
+                );
+            }
+
+            Craft::$app->getView()->registerAssetBundle(CpFieldInspectBundle::class);
+            Craft::$app->getView()->registerJs('Craft.CpFieldInspectPlugin.init('.json_encode($data).');');
+        }
+    }
 
 }
