@@ -2,7 +2,7 @@
     "name": "mmikkel/cp-field-inspect",
     "description": "Inspect field handles and easily edit field settings",
     "type": "craft-plugin",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "keywords": [
         "craft",
         "cms",

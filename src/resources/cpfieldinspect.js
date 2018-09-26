@@ -117,15 +117,15 @@
                 elementSourceEditType = Craft.t('app', 'Entry Type');
                 var typeId = $('#entryType').val() || false;
                 elementSourceEditLink += '/' + (typeId ? typeId : (this.data.entryTypeIds.hasOwnProperty(elementSources.sectionId) ? this.data.entryTypeIds[elementSources.sectionId][0] : ''));
-            } else if (this.data.baseEditGlobalSetUrl && elementSources.hasOwnProperty('setId') && $('input[type="hidden"][name="action"][value="globals/saveSet"]').length === 0)
+            } else if (this.data.baseEditGlobalSetUrl && elementSources.hasOwnProperty('setId') && $('input[type="hidden"][name="action"][value="globals/save-content"]').length)
             {
-                elementSourceEditLink = this.data.baseEditGlobalSetUrl + '/' + elementSources.setId;
+                elementSourceEditLink = this.data.baseEditGlobalSetUrl + '/' + elementSources.setId + '#set-fieldlayout';
                 elementSourceEditType = Craft.t('app', 'Global Set');
-            } else if (this.data.baseEditCategoryGroupUrl && elementSources.hasOwnProperty('groupId') && $('input[type="hidden"][name="action"][value="categories/saveCategory"]').length)
+            } else if (this.data.baseEditCategoryGroupUrl && elementSources.hasOwnProperty('groupId') && $('input[type="hidden"][name="action"][value="categories/save-category"]').length)
             {
-                elementSourceEditLink = this.data.baseEditCategoryGroupUrl + '/' + elementSources.groupId;
+                elementSourceEditLink = this.data.baseEditCategoryGroupUrl + '/' + elementSources.groupId + '#categorygroup-fieldlayout';
                 elementSourceEditType = Craft.t('app', 'Category Group');
-            } else if (this.data.baseEditCommerceProductTypeUrl && elementSources.hasOwnProperty('typeId') && $('input[type="hidden"][name="action"][value="commerce/products/saveProduct"]').length) {
+            } else if (this.data.baseEditCommerceProductTypeUrl && elementSources.hasOwnProperty('typeId') && $('input[type="hidden"][name="action"][value="commerce/products/save-product"]').length) {
                 elementSourceEditLink = this.data.baseEditCommerceProductTypeUrl + '/' + elementSources.typeId;
                 elementSourceEditType = Craft.t('app', 'Product Type');
             }
