@@ -277,7 +277,7 @@
             }).bind(this));
         },
         onAjaxComplete: function(e, status, requestData) {
-            if (requestData.url.indexOf('switchEntryType') > -1) {// || Craft.path !== this.path) {
+            if (requestData.url.indexOf('switch-entry-type') > -1) {
                 this.render();
             }
         }
