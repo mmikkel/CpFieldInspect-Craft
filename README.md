@@ -36,6 +36,48 @@ To install the plugin, follow these instructions.
 
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for CP Field Inspect.
 
+## Cogwheels not appearing?
+
+A semi-common issue with CP Field Inspect is that the field cogwheels do not appear, even if the currently logged in user has admin privileges. 
+
+This is most often due to the site having one or several [custom modules](https://docs.craftcms.com/v3/extend/module-guide.html) installed, that call `Craft::$app->getUser()->getIdentity()` or similar (i.e. to check the currently logged-in user's group affiliations or permissions) from their constructor or `init()` methods. This has been confirmed, due to [a bug in Craft](https://github.com/craftcms/cms/issues/2473), to prevent CP Field Inspect from displaying the cogwheels, since `Craft::$app->getUser()->getIsAdmin()` will actually return a false negative in plugins, in this scenario.  
+
+The workaround is to defer any calls to `Craft::$app->getUser()` (such as `Craft::$app->getUser()->getIdentity()` etc) in the offending custom module to the `Plugins::AFTER_LOAD_PLUGINS` event; essentially letting plugins like CP Field Inspect load before calling that method (in Craft 3, modules are loaded before plugins).  
+
+Here's how the workaround can look (the below would go in your custom module's primary class):
+
+```php
+public function init()
+{
+    parent::init();
+    self::$instance = $this;
+
+    // Defer further boot-up until after plugins have loaded
+    Event::on(
+        Plugins::class,
+        Plugins::EVENT_AFTER_LOAD_PLUGINS,
+        function () {
+            $this->doIt();
+        }
+    );
+
+    Craft::info(
+        Craft::t(
+            'my-module',
+            '{name} module loaded',
+            ['name' => 'My Module']
+        ),
+        __METHOD__
+    );
+}
+
+protected function doIt()
+{
+    $currentUser = Craft::$app->getUser()->getIdentity();
+    // ... all other logic dependant on `$currentUser`
+}
+```
+
 ## Disclaimer
 
 This plugin is provided free of charge and you can do whatever you want with it. CP Field Inspect is _very_ unlikely to mess up your stuff, but just to be clear: the author is not responsible for data loss or any other problems resulting from the use of this plugin.
