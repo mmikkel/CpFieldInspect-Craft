@@ -86,24 +86,24 @@ class CpFieldInspect extends Plugin
             }
         );
 
-/**
- * Logging in Craft involves using one of the following methods:
- *
- * Craft::trace(): record a message to trace how a piece of code runs. This is mainly for development use.
- * Craft::info(): record a message that conveys some useful information.
- * Craft::warning(): record a warning message that indicates something unexpected has happened.
- * Craft::error(): record a fatal error that should be investigated as soon as possible.
- *
- * Unless `devMode` is on, only Craft::warning() & Craft::error() will log to `craft/storage/logs/web.log`
- *
- * It's recommended that you pass in the magic constant `__METHOD__` as the second parameter, which sets
- * the category to the method (prefixed with the fully qualified class name) where the constant appears.
- *
- * To enable the Yii debug toolbar, go to your user account in the AdminCP and check the
- * [] Show the debug toolbar on the front end & [] Show the debug toolbar on the Control Panel
- *
- * http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html
- */
+        /**
+         * Logging in Craft involves using one of the following methods:
+         *
+         * Craft::trace(): record a message to trace how a piece of code runs. This is mainly for development use.
+         * Craft::info(): record a message that conveys some useful information.
+         * Craft::warning(): record a warning message that indicates something unexpected has happened.
+         * Craft::error(): record a fatal error that should be investigated as soon as possible.
+         *
+         * Unless `devMode` is on, only Craft::warning() & Craft::error() will log to `craft/storage/logs/web.log`
+         *
+         * It's recommended that you pass in the magic constant `__METHOD__` as the second parameter, which sets
+         * the category to the method (prefixed with the fully qualified class name) where the constant appears.
+         *
+         * To enable the Yii debug toolbar, go to your user account in the AdminCP and check the
+         * [] Show the debug toolbar on the front end & [] Show the debug toolbar on the Control Panel
+         *
+         * http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html
+         */
         Craft::info(
             Craft::t(
                 'cp-field-inspect',
@@ -116,6 +116,12 @@ class CpFieldInspect extends Plugin
 
     // Protected Methods
     // =========================================================================
+
+    /**
+     * @return bool
+     * @throws \yii\base\Exception
+     * @throws \yii\base\InvalidConfigException
+     */
     protected function doIt()
     {
 
@@ -124,10 +130,10 @@ class CpFieldInspect extends Plugin
         if ($request->getIsAjax()) {
 
             if (!$request->getIsPost()) {
-                return false;
+                return;
             }
 
-            $segments = $request->segments;
+            $segments = $request->getSegments();
             $actionSegment = $segments[count($segments) - 1];
 
             if ($actionSegment !== 'get-editor-html') {
@@ -138,42 +144,40 @@ class CpFieldInspect extends Plugin
 
         } else {
 
-            $data = array(
-                'redirectUrl' => Craft::$app->getSecurity()->hashData(implode('/', $request->segments)),
-                'fields' => array(),
-                'entryTypeIds' => array(),
-                'baseEditFieldUrl' => rtrim(UrlHelper::cpUrl('settings/fields/edit'), '/'),
-                'baseEditEntryTypeUrl' => rtrim(UrlHelper::cpUrl('settings/sections/sectionId/entrytypes'), '/'),
-                'baseEditGlobalSetUrl' => rtrim(UrlHelper::cpUrl('settings/globals'), '/'),
-                'baseEditCategoryGroupUrl' => rtrim(UrlHelper::cpUrl('settings/categories'), '/'),
-                'baseEditCommerceProductTypeUrl' => rtrim(UrlHelper::cpUrl('commerce/settings/producttypes'), '/'),
-            );
+            $data = [
+                'redirectUrl' => Craft::$app->getSecurity()->hashData(implode('/', $request->getSegments())),
+                'fields' => [],
+                'entryTypeIds' => [],
+                'baseEditFieldUrl' => \rtrim(UrlHelper::cpUrl('settings/fields/edit'), '/'),
+                'baseEditEntryTypeUrl' => \rtrim(UrlHelper::cpUrl('settings/sections/sectionId/entrytypes'), '/'),
+                'baseEditGlobalSetUrl' => \rtrim(UrlHelper::cpUrl('settings/globals'), '/'),
+                'baseEditCategoryGroupUrl' => \rtrim(UrlHelper::cpUrl('settings/categories'), '/'),
+                'baseEditCommerceProductTypeUrl' => \rtrim(UrlHelper::cpUrl('commerce/settings/producttypes'), '/'),
+            ];
 
             $sectionIds = Craft::$app->getSections()->getAllSectionIds();
-            foreach ($sectionIds as $sectionId)
-            {
+            foreach ($sectionIds as $sectionId) {
                 $entryTypes = Craft::$app->getSections()->getEntryTypesBySectionId($sectionId);
-                $data['entryTypeIds']['' . $sectionId] = array();
-                foreach ($entryTypes as $entryType)
-                {
-                    $data['entryTypeIds']['' . $sectionId][] = $entryType->id;
+                $data['entryTypeIds'][(string)$sectionId] = [];
+                foreach ($entryTypes as $entryType) {
+                    $data['entryTypeIds'][(string)$sectionId][] = $entryType->id;
                 }
             }
 
 
             $fields = Craft::$app->getFields()->getAllFields();
 
-            foreach ($fields as $field)
-            {
+            foreach ($fields as $field) {
 
-                $data['fields'][$field->handle] = array(
+                $data['fields'][$field->handle] = [
                     'id' => $field->id,
                     'handle' => $field->handle,
-                );
+                ];
             }
 
-            Craft::$app->getView()->registerAssetBundle(CpFieldInspectBundle::class);
-            Craft::$app->getView()->registerJs('Craft.CpFieldInspectPlugin.init('.json_encode($data).');');
+            $view = Craft::$app->getView();
+            $view->registerAssetBundle(CpFieldInspectBundle::class);
+            $view->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data) . ');');
         }
     }
 
