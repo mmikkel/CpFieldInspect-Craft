@@ -10,13 +10,11 @@
 
 namespace mmikkel\cpfieldinspect;
 
-
 use Craft;
 use craft\base\Plugin;
-use craft\services\Plugins;
 use craft\events\PluginEvent;
-
 use craft\helpers\UrlHelper;
+use craft\services\Plugins;
 
 use yii\base\Event;
 
@@ -36,6 +34,12 @@ use yii\base\Event;
  *
  *
  * Plugin icon credit: CUSTOMIZE SEARCH by creative outlet from the Noun Project
+ *
+ */
+
+/**
+ * Class CpFieldInspect
+ * @package mmikkel\cpfieldinspect
  *
  */
 class CpFieldInspect extends Plugin
@@ -144,8 +148,11 @@ class CpFieldInspect extends Plugin
 
         } else {
 
+            $queryString = $request->getQueryStringWithoutPath();
+            $redirectUrl = \implode('?', \array_filter([\implode('/', $request->getSegments()), $request->getQueryStringWithoutPath()]));
+            $redirectUrl = Craft::$app->getSecurity()->hashData($redirectUrl);
+
             $data = [
-                'redirectUrl' => Craft::$app->getSecurity()->hashData(implode('/', $request->getSegments())),
                 'fields' => [],
                 'entryTypeIds' => [],
                 'baseEditFieldUrl' => \rtrim(UrlHelper::cpUrl('settings/fields/edit'), '/'),
@@ -153,6 +160,7 @@ class CpFieldInspect extends Plugin
                 'baseEditGlobalSetUrl' => \rtrim(UrlHelper::cpUrl('settings/globals'), '/'),
                 'baseEditCategoryGroupUrl' => \rtrim(UrlHelper::cpUrl('settings/categories'), '/'),
                 'baseEditCommerceProductTypeUrl' => \rtrim(UrlHelper::cpUrl('commerce/settings/producttypes'), '/'),
+                'redirectUrl' => $redirectUrl,
             ];
 
             $sectionIds = Craft::$app->getSections()->getAllSectionIds();

@@ -27,6 +27,8 @@
         },
         init: function (data) {
 
+            var _this = this;
+
             this.data = data;
             this.setPathAndRedirect();
 
@@ -42,6 +44,23 @@
                 }).bind(this);
 
             livePreviewPoller();
+
+            // Poll for address bar change
+            var url = window.location.href;
+            this.addressBarChangeInterval = setInterval(function () {
+                var newUrl = window.location.href;
+                if (newUrl === url) {
+                    return;
+                }
+                url = newUrl;
+                try {
+                    Craft.postActionRequest('cp-field-inspect/default/get-redirect-hash', { url: url }, $.proxy(function (response) {
+                        this.data.redirectUrl = response.data || this.data.redirectUrl || null;
+                    }, _this));
+                } catch (error) {
+                    console.error(error);
+                }
+            }, 100);
 
             // Add event handlers
             Garnish.$doc
@@ -68,11 +87,13 @@
                 }).bind(this);
             doInitElementEditor();
         },
+
         destroyElementEditor: function (elementEditor) {
             if (this.elementEditors.hasOwnProperty(elementEditor._namespace)) {
                 delete this.elementEditors[elementEditor._namespace];
             }
         },
+
         setPathAndRedirect: function () {
 
             var redirectTo = Craft.getLocalStorage(this.settings.redirectKey);
@@ -88,12 +109,14 @@
             }
             Craft.setLocalStorage(this.settings.redirectKey, null);
         },
+
         render: function () {
             $('.cpFieldInspect').remove();
             $('[data-cpfieldlinks]').removeAttr('data-cpfieldlinks');
             this.addSourceLink();
             this.addFieldLinks();
         },
+
         addSourceLink: function () {
 
             var segments = window.location.pathname.split('/');
@@ -154,6 +177,7 @@
             }
 
         },
+
         addFieldLinks: function () {
 
             var self = this,
@@ -222,18 +246,21 @@
             }
 
         },
+
         getFieldHandleFromAttribute: function (value) {
             if (!value) return false;
             value = value.split('-');
             if (value.length < 3) return false;
             return value[value.length-2];
         },
+
         getFieldContextSelector: function () {
             if (this.isLivePreview) {
                 return '.lp-editor';
             }
             return '#main';
         },
+
         templates: {
             editFieldBtn: function (attributes)
             {
@@ -256,26 +283,31 @@
                     '</div>';
             }
         },
+
         onLivePreviewEnter: function () {
             this.isLivePreview = true;
             Garnish.requestAnimationFrame((function () {
                 this.addFieldLinks();
             }).bind(this));
         },
+
         onLivePreviewExit: function () {
             this.isLivePreview = false;
             Garnish.requestAnimationFrame((function () {
                 this.addFieldLinks();
             }).bind(this));
         },
+
         onCpFieldLinksClick: function (e) {
             Craft.setLocalStorage(this.settings.redirectKey, this.data.redirectUrl || null);
         },
+
         onMatrixBlockAddButtonClick: function (e) {
             Garnish.requestAnimationFrame((function () {
                 this.addFieldLinks();
             }).bind(this));
         },
+
         onAjaxComplete: function(e, status, requestData) {
             if (requestData.url.indexOf('switch-entry-type') > -1) {
                 this.render();
