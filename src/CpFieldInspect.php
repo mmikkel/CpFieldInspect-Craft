@@ -148,9 +148,7 @@ class CpFieldInspect extends Plugin
 
         } else {
 
-            $queryString = $request->getQueryStringWithoutPath();
             $redirectUrl = \implode('?', \array_filter([\implode('/', $request->getSegments()), $request->getQueryStringWithoutPath()]));
-            $redirectUrl = Craft::$app->getSecurity()->hashData($redirectUrl);
 
             $data = [
                 'fields' => [],
@@ -160,7 +158,7 @@ class CpFieldInspect extends Plugin
                 'baseEditGlobalSetUrl' => \rtrim(UrlHelper::cpUrl('settings/globals'), '/'),
                 'baseEditCategoryGroupUrl' => \rtrim(UrlHelper::cpUrl('settings/categories'), '/'),
                 'baseEditCommerceProductTypeUrl' => \rtrim(UrlHelper::cpUrl('commerce/settings/producttypes'), '/'),
-                'redirectUrl' => $redirectUrl,
+                'redirectUrl' => Craft::$app->getSecurity()->hashData($redirectUrl),
             ];
 
             $sectionIds = Craft::$app->getSections()->getAllSectionIds();

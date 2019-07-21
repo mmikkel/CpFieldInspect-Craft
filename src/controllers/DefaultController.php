@@ -4,9 +4,9 @@ namespace mmikkel\cpfieldinspect\controllers;
 
 use Craft;
 use craft\web\Controller;
-use craft\web\Response;
 
 use yii\web\BadRequestHttpException;
+use yii\web\Response;
 
 class DefaultController extends Controller
 {
@@ -21,9 +21,8 @@ class DefaultController extends Controller
         $this->requireCpRequest();
         $this->requirePostRequest();
         $url = Craft::$app->getRequest()->getRequiredBodyParam('url');
-        $path = \parse_url($url, PHP_URL_PATH);
-        if (!$path) {
-            throw new BadRequestHttpException('Invalid URL');
+        if (!$url || !\is_string($url) || !$path = \parse_url($url, PHP_URL_PATH)) {
+            throw new BadRequestHttpException('Bad URL parameter');
         }
         $segments = \array_values(\array_filter(\explode('/', $path)));
         $cpTrigger = Craft::$app->getConfig()->getGeneral()->cpTrigger;
