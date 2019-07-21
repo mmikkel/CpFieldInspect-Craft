@@ -12,7 +12,8 @@ class DefaultController extends Controller
 {
 
     /**
-     * @return string
+     * @return Response
+     * @throws BadRequestHttpException
      * @throws \yii\base\Exception
      * @throws \yii\base\InvalidConfigException
      */
