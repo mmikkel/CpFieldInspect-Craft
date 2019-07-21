@@ -1,5 +1,7 @@
 # CP Field Inspect plugin for Craft CMS 3.x
 
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mmikkel/CpFieldInspect-Craft/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mmikkel/CpFieldInspect-Craft/?branch=master)
+
 CP Field Inspect is a tiny utility plugin making content modelling a little bit easier in Craft.  
 
 Did you forget a field handle? Mouse over the cogwheel next to the field title, and CP Field Inspect will tell you.  
