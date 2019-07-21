@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.0.6 - 2019-07-21
+### Improved
+- Fixes compatibility with Craft 3.2's new auto-saving drafts system
+
 ## 1.0.5 - 2018-09-26
 ### Fixed
 - Fixes an issue where cogwheels would disappear when changing entry types
