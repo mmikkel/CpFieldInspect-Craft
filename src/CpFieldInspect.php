@@ -208,7 +208,7 @@ class CpFieldInspect extends Plugin
                 ->all();
 
 
-            $data['fields'] = ArrayHelper::index($fields, 'id');
+            $data['fields'] = ArrayHelper::index($fields, 'handle');
             $view = Craft::$app->getView();
             $view->registerAssetBundle(CpFieldInspectBundle::class);
             $view->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data) . ');');
