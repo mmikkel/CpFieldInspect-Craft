@@ -12,7 +12,10 @@ namespace mmikkel\cpfieldinspect;
 
 use Craft;
 use craft\base\Plugin;
+use craft\db\Query;
+use craft\db\Table;
 use craft\events\PluginEvent;
+use craft\helpers\ArrayHelper;
 use craft\helpers\UrlHelper;
 use craft\services\Plugins;
 
@@ -74,10 +77,27 @@ class CpFieldInspect extends Plugin
         parent::init();
         self::$plugin = $this;
 
-        $user = Craft::$app->getUser();
         $request = Craft::$app->getRequest();
+        // this will break the fields and plugins initialization
+        // https://github.com/craftcms/cms/issues/4944
+        // https://github.com/mmikkel/CpFieldInspect-Craft/issues/11
+        // $fields = Craft::$app->getFields()->getAllFields();
+        if (/*!$user->getIsAdmin() || */ !$request->getIsCpRequest() || $request->getIsConsoleRequest()) {
+            return;
+        }
 
-        if (!$user->getIsAdmin() || !$request->getIsCpRequest() || $request->getIsConsoleRequest()) {
+        // this is hacky and ugly but I don't know an alternative... we can't populate the user yet ¯\_(ツ)_/¯
+        $session = Craft::$app->getSession();
+        $id = $session->getHasSessionId() || $session->getIsActive() ? $session->get(Craft::$app->getUser()->idParam) : null;
+        if(empty($id) === true){
+            return;
+        }
+        $isAdmin = (new Query())
+            ->select('admin')
+            ->from(Table::USERS)
+            ->where(['id' => $id])
+            ->scalar();
+        if((bool)$isAdmin === false){
             return;
         }
 
@@ -171,16 +191,24 @@ class CpFieldInspect extends Plugin
             }
 
 
-            $fields = Craft::$app->getFields()->getAllFields();
+            // this will break the fields and plugins initialization
+            // https://github.com/craftcms/cms/issues/4944
+            // https://github.com/mmikkel/CpFieldInspect-Craft/issues/11
+            // $fields = Craft::$app->getFields()->getAllFields();
 
-            foreach ($fields as $field) {
+            // query for the fields myself because otherwise it will mess up the users field layout
+            $fields = (new Query())
+                ->select([
+                             'fields.id',
+                             'fields.handle',
+                         ])
+                ->from(['{{%fields}} fields'])
+                ->where(['context' => 'global'])
+                ->orderBy(['fields.name' => SORT_ASC, 'fields.handle' => SORT_ASC])
+                ->all();
 
-                $data['fields'][$field->handle] = [
-                    'id' => $field->id,
-                    'handle' => $field->handle,
-                ];
-            }
 
+            $data['fields'] = ArrayHelper::index($fields, 'id');
             $view = Craft::$app->getView();
             $view->registerAssetBundle(CpFieldInspectBundle::class);
             $view->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data) . ');');
