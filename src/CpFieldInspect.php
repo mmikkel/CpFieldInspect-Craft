@@ -74,10 +74,9 @@ class CpFieldInspect extends Plugin
         parent::init();
         self::$plugin = $this;
 
-        $user = Craft::$app->getUser();
         $request = Craft::$app->getRequest();
 
-        if (!$user->getIsAdmin() || !$request->getIsCpRequest() || $request->getIsConsoleRequest()) {
+        if (!$request->getIsCpRequest() || $request->getIsConsoleRequest()) {
             return;
         }
 
@@ -128,6 +127,11 @@ class CpFieldInspect extends Plugin
      */
     protected function doIt()
     {
+
+        $user = Craft::$app->getUser();
+        if (!$user->getIsAdmin()) {
+            return;
+        }
 
         $request = Craft::$app->getRequest();
 

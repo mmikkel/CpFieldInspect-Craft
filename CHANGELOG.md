@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.0.7 - 2019-10-21
+### Improved
+- Fixes an issue where CP Field Inspect could conflict with other plugins.
+
 ## 1.0.6 - 2019-07-21
 ### Improved
 - Fixes compatibility with Craft 3.2's new auto-saving drafts system
