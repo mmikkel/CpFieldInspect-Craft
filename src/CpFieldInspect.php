@@ -11,7 +11,9 @@
 namespace mmikkel\cpfieldinspect;
 
 use Craft;
+use craft\base\ElementInterface;
 use craft\base\Plugin;
+use craft\elements\Asset;
 use craft\events\PluginEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Plugins;
@@ -117,11 +119,49 @@ class CpFieldInspect extends Plugin
         );
     }
 
+    /**
+     * @param array $context
+     * @return string
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     * @throws \Twig_Error_Loader
+     * @throws \yii\base\Exception
+     */
+    public function renderEditSourceLink(array $context)
+    {
+        $entry = $context['entry'] ?? null;
+        if ($entry) {
+            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-entry-type-link', $context);
+        }
+        $asset = ($context['element'] ?? null) && $context['element'] instanceof Asset ? $context['element'] : null;
+        if ($asset) {
+            $context['asset'] = $context['element'];
+            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-volume-link', $context);
+        }
+        $globalSet = $context['globalSet'] ?? null;
+        if ($globalSet) {
+            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-globalset-link', $context);
+        }
+        $user = $context['user'] ?? null;
+        if ($user) {
+            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-users-link', $context);
+        }
+        $category = $context['category'] ?? null;
+        if ($category) {
+            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-category-group-link', $context);
+        }
+        $product = $context['product'] ?? null;
+        if ($product) {
+            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-commerce-product-type-link', $context);
+        }
+        return '';
+    }
+
     // Protected Methods
     // =========================================================================
 
     /**
-     * @return bool
      * @throws \yii\base\Exception
      * @throws \yii\base\InvalidConfigException
      */
@@ -133,6 +173,16 @@ class CpFieldInspect extends Plugin
             return;
         }
 
+        // Template hooks
+        $view = Craft::$app->getView();
+        $view->hook('cp.assets.edit.meta', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.entries.edit.meta', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.globals.edit.content', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.users.edit.details', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.categories.edit.details', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.commerce.product.edit.details', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.commerce.order.edit.main-pane', [$this, 'renderEditSourceLink']);
+
         $request = Craft::$app->getRequest();
 
         if ($request->getIsAjax()) {
@@ -141,11 +191,9 @@ class CpFieldInspect extends Plugin
                 return;
             }
 
-            $segments = $request->getSegments();
-            $actionSegment = $segments[count($segments) - 1];
-
-            if ($actionSegment !== 'get-editor-html') {
-                return false;
+            $segments = $request->getActionSegments();
+            if (empty($segments) || !\is_array($segments) || $segments[count($segments) - 1] !== 'get-editor-html') {
+                return;
             }
 
             Craft::$app->getView()->registerJs('Craft.CpFieldInspectPlugin.initElementEditor();');
@@ -157,11 +205,6 @@ class CpFieldInspect extends Plugin
             $data = [
                 'fields' => [],
                 'entryTypeIds' => [],
-                'baseEditFieldUrl' => \rtrim(UrlHelper::cpUrl('settings/fields/edit'), '/'),
-                'baseEditEntryTypeUrl' => \rtrim(UrlHelper::cpUrl('settings/sections/sectionId/entrytypes'), '/'),
-                'baseEditGlobalSetUrl' => \rtrim(UrlHelper::cpUrl('settings/globals'), '/'),
-                'baseEditCategoryGroupUrl' => \rtrim(UrlHelper::cpUrl('settings/categories'), '/'),
-                'baseEditCommerceProductTypeUrl' => \rtrim(UrlHelper::cpUrl('commerce/settings/producttypes'), '/'),
                 'redirectUrl' => Craft::$app->getSecurity()->hashData($redirectUrl),
             ];
 
@@ -174,7 +217,6 @@ class CpFieldInspect extends Plugin
                 }
             }
 
-
             $fields = Craft::$app->getFields()->getAllFields();
 
             foreach ($fields as $field) {
@@ -185,7 +227,6 @@ class CpFieldInspect extends Plugin
                 ];
             }
 
-            $view = Craft::$app->getView();
             $view->registerAssetBundle(CpFieldInspectBundle::class);
             $view->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data) . ');');
         }

@@ -1,0 +1,12 @@
+{% if user ?? null %}
+
+    {% set editUri = 'settings/users/fields' %}
+    {% set sourceType = 'Settings'|t('app') %}
+
+    <div class="data">
+        <p>
+            {% include 'cp-field-inspect/_includes/edit-source-link.twig' %}
+        </p>
+    </div>
+
+{% endif %}

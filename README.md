@@ -1,4 +1,4 @@
-# CP Field Inspect plugin for Craft CMS 3.x
+# CP Field Inspect plugin for Craft CMS 3.4.x
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mmikkel/CpFieldInspect-Craft/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mmikkel/CpFieldInspect-Craft/?branch=master)
 
@@ -14,15 +14,17 @@ Note that CP Field Inspect will only be active for **admin** users.
 
 ![Easily inspect field handles and edit fields](resources/img/ihvhsZbIRw.gif)
 
-Plugin icon: CUSTOMIZE SEARCH by creative outlet from [the Noun Project](https://thenounproject.com)  
-
-Looking for the Craft 2 version? [It's right here](https://github.com/mmikkel/CpFieldLinks-Craft).
+Plugin icon: CUSTOMIZE SEARCH by creative outlet from [the Noun Project](https://thenounproject.com)
 
 ## Requirements
 
-This plugin requires Craft CMS 3.0.0-beta.23 or later.
+**This plugin requires [Craft CMS 3.4.2](https://github.com/craftcms/cms/blob/develop/CHANGELOG-v3.md#342---2020-01-31) or later.**
 
-Tested and working w/ Craft CMS 3 RC1 (3.0.0.-beta.29).
+Older Craft 3.x installs should install CP Field Inspect v. 1.0.7:
+
+    composer require mmikkel/cp-field-inspect:1.0.7  
+
+Looking for the Craft 2 version? [It's right here](https://github.com/mmikkel/CpFieldLinks-Craft).
 
 ## Installation
 

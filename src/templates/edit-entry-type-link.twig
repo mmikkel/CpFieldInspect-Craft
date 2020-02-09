@@ -1,0 +1,22 @@
+{% if entry ?? null %}
+
+    {% set section = element.getSection() %}
+    {% set entryTypes = section.getEntryTypes() %}
+
+    {% set sourceType = 'Entry Type'|t('app') %}
+
+    <div class="data" style="padding-top:20px;padding-bottom:10px;">
+        <p>
+            {% for entryType in entryTypes %}
+                {% filter attr({
+                    'data-typeid': entryType.id,
+                    style: entryType.id != entry.typeId ? 'display:none;' : false
+                }) %}
+                    {% set editUri = 'settings/sections/' ~ section.id ~ '/entrytypes/' ~ entryType.id %}
+                    {% include 'cp-field-inspect/_includes/edit-source-link.twig' %}
+                {% endfilter %}
+            {% endfor %}
+        </p>
+    </div>
+
+{% endif %}

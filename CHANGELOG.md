@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.1.0 - 2020-02-09
+### Added
+- Adds "Edit Volume" button to the new Asset edit view
+- Adds "Settings" button to the User edit view
+### Changed
+- CP Field Inspect now requires Craft 3.4.2
+### Improved
+- Fixes some Craft 3.4 compatibility issues
+- Replaces JavaScript injected element source links with native buttons rendered using core template hooks
+- Fixes support for Commerce Products (fixes an issue where the "Edit Product Type" source button was gone)
+
 ## 1.0.7 - 2019-10-21
 ### Improved
 - Fixes an issue where CP Field Inspect could conflict with other plugins.

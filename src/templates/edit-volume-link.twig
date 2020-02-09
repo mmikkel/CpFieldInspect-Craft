@@ -1,0 +1,12 @@
+{% if asset ?? null %}
+
+    {% set editUri = 'settings/assets/volumes/' ~ element.volumeId %}
+    {% set sourceType = 'Volume'|t('app') %}
+
+    <div class="data" style="padding-top:20px;padding-bottom:10px;">
+        <p>
+            {% include 'cp-field-inspect/_includes/edit-source-link.twig' %}
+        </p>
+    </div>
+
+{% endif %}

@@ -7,22 +7,16 @@
     Craft.CpFieldInspectPlugin = {
         elementEditors: {},
         settings: {
-            settingsClassSelector: 'cpFieldInspect-settings',
-            infoClassSelector: 'cpFieldInspect-info',
+            settingsClassSelector: 'cp-field-inspect-settings',
+            infoClassSelector: 'cp-field-inspect-info',
             redirectKey: '_CpFieldInspectRedirectTo',
             actionInputKeys: [
                 '[value="fields/save-field"]',
                 '[value="sections/save-entry-type"]',
                 '[value="globals/save-set"]',
                 '[value="categories/save-group"]',
+                '[value="volumes/save-volume"]',
                 '[value="commerce/product-types/save-product-type"]'
-            ],
-            sourceIdKeys: [
-                '[name="entryTypeId"]',
-                '[name="sectionId"]',
-                '[name="setId"]',
-                '[name="groupId"]',
-                '[name="typeId"]'
             ]
         },
         init: function (data) {
@@ -65,6 +59,7 @@
             // Add event handlers
             Garnish.$doc
                 .on('click', '.' + this.settings.settingsClassSelector + ' a', this.onCpFieldLinksClick.bind(this))
+                .on('click', '[data-cpfieldlinks-sourcebtn]', this.onCpFieldLinksClick.bind(this))
                 .on('click', '.matrix .btn.add, .matrix .btn[data-type]', this.onMatrixBlockAddButtonClick.bind(this))
                 .ajaxComplete(this.onAjaxComplete.bind(this));
 
@@ -96,6 +91,8 @@
 
         setPathAndRedirect: function () {
 
+            console.log('set path and redirect');
+
             var redirectTo = Craft.getLocalStorage(this.settings.redirectKey);
 
             if (redirectTo)
@@ -111,71 +108,8 @@
         },
 
         render: function () {
-            $('.cpFieldInspect').remove();
             $('[data-cpfieldlinks]').removeAttr('data-cpfieldlinks');
-            this.addSourceLink();
             this.addFieldLinks();
-        },
-
-        addSourceLink: function () {
-
-            var segments = window.location.pathname.split('/');
-
-            if (segments[2] === 'settings') {
-                return;
-            }
-
-            var $elementSourceIdInputs = $('input[type="hidden"]').filter(this.settings.sourceIdKeys.join(',')),
-                elementSources = {},
-                elementSourceEditLink = false,
-                elementSourceEditType;
-
-            $elementSourceIdInputs.each(function () {
-                elementSources[$(this).attr('name')] = $(this).attr('value');
-            });
-
-            if (this.data.baseEditEntryTypeUrl && elementSources.hasOwnProperty('sectionId'))
-            {
-                elementSourceEditLink = this.data.baseEditEntryTypeUrl.replace('sectionId', elementSources.sectionId);
-                elementSourceEditType = Craft.t('app', 'Entry Type');
-                var typeId = $('#entryType').val() || false;
-                elementSourceEditLink += '/' + (typeId ? typeId : (this.data.entryTypeIds.hasOwnProperty(elementSources.sectionId) ? this.data.entryTypeIds[elementSources.sectionId][0] : ''));
-            } else if (this.data.baseEditGlobalSetUrl && elementSources.hasOwnProperty('setId') && $('input[type="hidden"][name="action"][value="globals/save-content"]').length)
-            {
-                elementSourceEditLink = this.data.baseEditGlobalSetUrl + '/' + elementSources.setId + '#set-fieldlayout';
-                elementSourceEditType = Craft.t('app', 'Global Set');
-            } else if (this.data.baseEditCategoryGroupUrl && elementSources.hasOwnProperty('groupId') && $('input[type="hidden"][name="action"][value="categories/save-category"]').length)
-            {
-                elementSourceEditLink = this.data.baseEditCategoryGroupUrl + '/' + elementSources.groupId + '#categorygroup-fieldlayout';
-                elementSourceEditType = Craft.t('app', 'Category Group');
-            } else if (this.data.baseEditCommerceProductTypeUrl && elementSources.hasOwnProperty('typeId') && $('input[type="hidden"][name="action"][value="commerce/products/save-product"]').length) {
-                elementSourceEditLink = this.data.baseEditCommerceProductTypeUrl + '/' + elementSources.typeId;
-                elementSourceEditType = Craft.t('app', 'Product Type');
-            }
-
-            if (elementSourceEditLink)
-            {
-                var $editSourceButton = $(this.templates.editSourceBtn(elementSourceEditLink, elementSourceEditType));
-
-                switch (elementSourceEditType)
-                {
-                    case Craft.t('app', 'Global Set'):
-                        $editSourceButton.appendTo($('#content'));
-                        break;
-
-                    case Craft.t('app', 'Entry Type') : case Craft.t('app', 'Category Group') :
-                        $('#settings').find('.field:last').append($editSourceButton);
-                    break;
-
-                    case Craft.t('app', 'Product Type') :
-                        $('#meta-pane').find('.field:last').append($editSourceButton);
-                        break;
-
-                    default :
-                        $editSourceButton.appendTo($('#main'));
-                }
-            }
-
         },
 
         addFieldLinks: function () {
@@ -264,22 +198,11 @@
         templates: {
             editFieldBtn: function (attributes)
             {
-                return  '<div class="cpFieldInspect cpFieldInspect-fieldEdit" aria-hidden="true">' +
+                return  '<div class="cp-field-inspect cp-field-inspect-field-edit" aria-hidden="true">' +
                     '<div class="' + Craft.CpFieldInspectPlugin.settings.settingsClassSelector + '">' +
                     '<a href="' + Craft.CpFieldInspectPlugin.data.baseEditFieldUrl + '/' + attributes.id + '" class="settings icon" role="button" aria-label="Edit field" tabindex="-1"></a>' +
                     '</div>' +
                     '<div class="' + Craft.CpFieldInspectPlugin.settings.infoClassSelector + '">' + '<p><code>' + attributes.handle + '</code></p></div>' +
-                    '</div>';
-            },
-            editSourceBtn: function (href, type)
-            {
-                return  '<div class="cpFieldInspect cpFieldInspect-sourceEdit">' +
-                    '<div class="cpFieldInspect-wrapper">' +
-                    '<div class="' + Craft.CpFieldInspectPlugin.settings.settingsClassSelector + '">' +
-                    '<a href="' + href + '" class="settings icon" role="button" aria-label="Edit ' + (type || 'element source') + '"></a>' +
-                    '</div>' +
-                    '<div class="' + Craft.CpFieldInspectPlugin.settings.infoClassSelector + '">' + '<p><span>Edit ' + (type || 'element source') + '</span></p></div>' +
-                    '</div>' +
                     '</div>';
             }
         },
@@ -310,6 +233,12 @@
 
         onAjaxComplete: function(e, status, requestData) {
             if (requestData.url.indexOf('switch-entry-type') > -1) {
+                const $entryTypeSelect = $('#entryType');
+                if ($entryTypeSelect.length) {
+                    const typeId = $entryTypeSelect.val();
+                    $('[data-cpfieldlinks-sourcebtn][data-typeid]:not([data-typeid="' + typeId + '"]').hide();
+                    $('[data-cpfieldlinks-sourcebtn][data-typeid="' + typeId + '"]').show();
+                }
                 this.render();
             }
         }

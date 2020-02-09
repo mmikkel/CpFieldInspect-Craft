@@ -1,0 +1,12 @@
+{% if globalSet ?? null %}
+
+    {% set editUri = 'settings/globals/' ~ globalSet.id %}
+    {% set sourceType = 'Global Set'|t('app') %}
+
+    <div class="data" style="padding-top: 30px;">
+        <p>
+            {% include 'cp-field-inspect/_includes/edit-source-link.twig' %}
+        </p>
+    </div>
+
+{% endif %}

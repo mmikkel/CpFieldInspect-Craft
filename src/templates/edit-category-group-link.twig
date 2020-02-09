@@ -1,0 +1,12 @@
+{% if category ?? null %}
+
+    {% set editUri = 'settings/categories/' ~ category.groupId %}
+    {% set sourceType = 'Category Group'|t('app') %}
+
+    <div class="data">
+        <p>
+            {% include 'cp-field-inspect/_includes/edit-source-link.twig' %}
+        </p>
+    </div>
+
+{% endif %}
