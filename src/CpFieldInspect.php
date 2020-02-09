@@ -204,6 +204,7 @@ class CpFieldInspect extends Plugin
 
             $data = [
                 'fields' => [],
+                'baseEditFieldUrl' => \rtrim(UrlHelper::cpUrl('settings/fields/edit'), '/'),
                 'redirectUrl' => Craft::$app->getSecurity()->hashData($redirectUrl),
             ];
 
