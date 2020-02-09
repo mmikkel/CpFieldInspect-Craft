@@ -204,18 +204,8 @@ class CpFieldInspect extends Plugin
 
             $data = [
                 'fields' => [],
-                'entryTypeIds' => [],
                 'redirectUrl' => Craft::$app->getSecurity()->hashData($redirectUrl),
             ];
-
-            $sectionIds = Craft::$app->getSections()->getAllSectionIds();
-            foreach ($sectionIds as $sectionId) {
-                $entryTypes = Craft::$app->getSections()->getEntryTypesBySectionId($sectionId);
-                $data['entryTypeIds'][(string)$sectionId] = [];
-                foreach ($entryTypes as $entryType) {
-                    $data['entryTypeIds'][(string)$sectionId][] = $entryType->id;
-                }
-            }
 
             $fields = Craft::$app->getFields()->getAllFields();
 
