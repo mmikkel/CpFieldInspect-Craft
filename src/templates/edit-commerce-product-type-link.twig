@@ -1,7 +1,7 @@
 {% if product ?? null %}
 
     {% set editUri = 'commerce/settings/producttypes/' ~ product.typeId %}
-    {% set sourceType = 'Product Type'|t('commerce') %}
+    {% set label = 'Edit Product Type'|t('cp-field-inspect') %}
 
     <div class="data" style="padding-top:10px;padding-bottom:20px;">
         <p>

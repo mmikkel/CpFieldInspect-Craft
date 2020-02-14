@@ -1,7 +1,7 @@
 {% if asset ?? null %}
 
     {% set editUri = 'settings/assets/volumes/' ~ element.volumeId %}
-    {% set sourceType = 'Volume'|t('app') %}
+    {% set label = 'Edit Volume'|t('cp-field-inspect') %}
 
     <div class="data" style="padding-top:20px;padding-bottom:10px;">
         <p>

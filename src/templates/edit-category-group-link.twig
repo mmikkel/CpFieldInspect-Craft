@@ -1,7 +1,7 @@
 {% if category ?? null %}
 
     {% set editUri = 'settings/categories/' ~ category.groupId %}
-    {% set sourceType = 'Category Group'|t('app') %}
+    {% set label = 'Edit Category Group'|t('cp-field-inspect') %}
 
     <div class="data">
         <p>

@@ -1,7 +1,7 @@
 {% if globalSet ?? null %}
 
     {% set editUri = 'settings/globals/' ~ globalSet.id %}
-    {% set sourceType = 'Global Set'|t('app') %}
+    {% set label = 'Edit Global Set'|t('cp-field-inspect') %}
 
     <div class="data" style="padding-top: 30px;">
         <p>
