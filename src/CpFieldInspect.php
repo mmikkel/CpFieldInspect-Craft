@@ -184,8 +184,9 @@ class CpFieldInspect extends Plugin
         $view->hook('cp.commerce.order.edit.main-pane', [$this, 'renderEditSourceLink']);
 
         $request = Craft::$app->getRequest();
+        $isAjax = $request->getIsAjax() || $request->getAcceptsJson();
 
-        if ($request->getIsAjax()) {
+        if ($isAjax) {
 
             if (!$request->getIsPost()) {
                 return;

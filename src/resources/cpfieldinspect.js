@@ -91,8 +91,6 @@
 
         setPathAndRedirect: function () {
 
-            console.log('set path and redirect');
-
             var redirectTo = Craft.getLocalStorage(this.settings.redirectKey);
 
             if (redirectTo)
