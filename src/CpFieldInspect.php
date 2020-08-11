@@ -77,8 +77,8 @@ class CpFieldInspect extends Plugin
         self::$plugin = $this;
 
         $request = Craft::$app->getRequest();
-
         if (!$request->getIsCpRequest() || $request->getIsConsoleRequest()) {
+            // Do nothing if this is a console or site request
             return;
         }
 
@@ -91,24 +91,6 @@ class CpFieldInspect extends Plugin
             }
         );
 
-        /**
-         * Logging in Craft involves using one of the following methods:
-         *
-         * Craft::trace(): record a message to trace how a piece of code runs. This is mainly for development use.
-         * Craft::info(): record a message that conveys some useful information.
-         * Craft::warning(): record a warning message that indicates something unexpected has happened.
-         * Craft::error(): record a fatal error that should be investigated as soon as possible.
-         *
-         * Unless `devMode` is on, only Craft::warning() & Craft::error() will log to `craft/storage/logs/web.log`
-         *
-         * It's recommended that you pass in the magic constant `__METHOD__` as the second parameter, which sets
-         * the category to the method (prefixed with the fully qualified class name) where the constant appears.
-         *
-         * To enable the Yii debug toolbar, go to your user account in the AdminCP and check the
-         * [] Show the debug toolbar on the front end & [] Show the debug toolbar on the Control Panel
-         *
-         * http://www.yiiframework.com/doc-2.0/guide-runtime-logging.html
-         */
         Craft::info(
             Craft::t(
                 'cp-field-inspect',
@@ -167,30 +149,27 @@ class CpFieldInspect extends Plugin
      */
     protected function doIt()
     {
-
         $user = Craft::$app->getUser();
         if (!$user->getIsAdmin()) {
             return;
         }
 
-        // Template hooks
-        $view = Craft::$app->getView();
-        $view->hook('cp.assets.edit.meta', [$this, 'renderEditSourceLink']);
-        $view->hook('cp.entries.edit.meta', [$this, 'renderEditSourceLink']);
-        $view->hook('cp.globals.edit.content', [$this, 'renderEditSourceLink']);
-        $view->hook('cp.users.edit.details', [$this, 'renderEditSourceLink']);
-        $view->hook('cp.categories.edit.details', [$this, 'renderEditSourceLink']);
-        $view->hook('cp.commerce.product.edit.details', [$this, 'renderEditSourceLink']);
-        $view->hook('cp.commerce.order.edit.main-pane', [$this, 'renderEditSourceLink']);
+        // Add source edit buttons if admin changes are allowed
+        if (Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
+            $view = Craft::$app->getView();
+            $view->hook('cp.assets.edit.meta', [$this, 'renderEditSourceLink']);
+            $view->hook('cp.entries.edit.meta', [$this, 'renderEditSourceLink']);
+            $view->hook('cp.globals.edit.content', [$this, 'renderEditSourceLink']);
+            $view->hook('cp.users.edit.details', [$this, 'renderEditSourceLink']);
+            $view->hook('cp.categories.edit.details', [$this, 'renderEditSourceLink']);
+            $view->hook('cp.commerce.product.edit.details', [$this, 'renderEditSourceLink']);
+            $view->hook('cp.commerce.order.edit.main-pane', [$this, 'renderEditSourceLink']);
+        }
 
         $request = Craft::$app->getRequest();
         $isAjax = $request->getIsAjax() || $request->getAcceptsJson();
 
         if ($isAjax) {
-
-            if (!$request->getIsPost()) {
-                return;
-            }
 
             $segments = $request->getActionSegments();
             if (empty($segments) || !\is_array($segments) || $segments[count($segments) - 1] !== 'get-editor-html') {
@@ -204,21 +183,17 @@ class CpFieldInspect extends Plugin
             $redirectUrl = \implode('?', \array_filter([\implode('/', $request->getSegments()), $request->getQueryStringWithoutPath()]));
 
             $data = [
-                'fields' => [],
+                'editFieldBtnLabel' => Craft::t('cp-field-inspect', 'Edit field settings'),
                 'baseEditFieldUrl' => \rtrim(UrlHelper::cpUrl('settings/fields/edit'), '/'),
                 'redirectUrl' => Craft::$app->getSecurity()->hashData($redirectUrl),
             ];
 
-            $fields = Craft::$app->getFields()->getAllFields();
-
+            $fields = Craft::$app->getFields()->getAllFields('global');
             foreach ($fields as $field) {
-
-                $data['fields'][$field->handle] = [
-                    'id' => $field->id,
-                    'handle' => $field->handle,
-                ];
+                $data['fields'][$field->handle] = (int)$field->id;
             }
 
+            $view = Craft::$app->getView();
             $view->registerAssetBundle(CpFieldInspectBundle::class);
             $view->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data) . ');');
         }

@@ -1,7 +1,7 @@
-{% if user ?? null %}
+{% if user ?? null and user.id %}
 
     {% set editUri = 'settings/users/fields' %}
-    {% set label = 'Settings'|t('app') %}
+    {% set label = 'Edit Users Settings'|t('cp-field-inspect') %}
 
     <div class="data">
         <p>
