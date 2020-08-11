@@ -1,10 +1,11 @@
+/** global: Craft */
+/** global: Garnish */
+/** global: $ */
+
 (function (window) {
 
-    /** global: Craft */
-    /** global: Garnish */
-
     if (!window.Craft || !window.Garnish || !window.$) {
-        return false;
+        return;
     }
 
     Craft.CpFieldInspectPlugin = {
@@ -213,15 +214,16 @@
         },
 
         onAjaxComplete: function(e, status, requestData) {
-            if (requestData.url.indexOf('switch-entry-type') > -1) {
-                const $entryTypeSelect = $('#entryType');
-                if ($entryTypeSelect.length) {
-                    const typeId = $entryTypeSelect.val();
-                    $('[data-cpfieldlinks-sourcebtn][data-typeid]:not([data-typeid="' + typeId + '"]').hide();
-                    $('[data-cpfieldlinks-sourcebtn][data-typeid="' + typeId + '"]').show();
-                }
-                this.addFieldLinks();
+            if (requestData.url.indexOf('switch-entry-type') === -1) {
+                return;
             }
+            const $entryTypeSelect = $('#entryType');
+            if ($entryTypeSelect.length) {
+                const typeId = $entryTypeSelect.val();
+                $('[data-cpfieldlinks-sourcebtn][data-typeid]:not([data-typeid="' + typeId + '"]').hide();
+                $('[data-cpfieldlinks-sourcebtn][data-typeid="' + typeId + '"]').show();
+            }
+            this.addFieldLinks();
         }
     };
 
