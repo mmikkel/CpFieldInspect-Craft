@@ -1,24 +1,31 @@
-# CP Field Inspect plugin for Craft CMS 3.4.x
+# CP Field Inspect plugin for Craft CMS 3.x
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mmikkel/CpFieldInspect-Craft/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mmikkel/CpFieldInspect-Craft/?branch=master)
 
 CP Field Inspect is a tiny utility plugin making content modelling a little bit easier in Craft.  
 
-Did you forget a field handle? Mouse over the cogwheel next to the field title, and CP Field Inspect will tell you.  
+The plugin adds a little cogwheel link to your fields (hidden inside the "copy field handle" element next to the field name). Clicking this link redirects you to that field's settings page - and back to your content when you save the settings.  
 
-Need to adjust some field settings? Click the cogwheel; CP Field Inspect will redirect you to the relevant field's settings page – and back to the content when you're done.  
+Additionally, CP Field Inspect will add a link to your element editor forms to edit the element _source's_ (i.e.entry type, category group, asset volume etc) settings, in the same manner.  
 
-Additionally, CP Field Inspect will add a link in your element edit forms to manage source settings (e.g. entry type, category group) in the same manner.  
+Not all users need to see these links, though. CP Field Inspect will do nothing if  
 
-Note that CP Field Inspect will only be active for **admin** users.  
+* The logged-in user is not an _admin_
+* `allowAdminChanges` is set to `false` in `config/general.php`
 
-![Easily inspect field handles and edit fields](resources/img/ihvhsZbIRw.gif)
+Additionally, the field links will *not* display if `devMode` is set to `false`. This is due to the links being wrapped inside the native "copy field handle" element, which only displays if `devMode` is enabled.    
+
+![Easily inspect field handles and edit fields](resources/img/demo.gif)
 
 Plugin icon: CUSTOMIZE SEARCH by creative outlet from [the Noun Project](https://thenounproject.com)
 
 ## Requirements
 
-**This plugin requires [Craft CMS 3.4.2](https://github.com/craftcms/cms/blob/develop/CHANGELOG-v3.md#342---2020-01-31) or later.**
+**This plugin requires Craft CMS 3.5.3 or later.**
+
+If you're on 3.4.2 or later, you should install CP Field Inspect v. 1.1.3:
+
+    composer require mmikkel/cp-field-inspect:1.1.3  
 
 Older Craft 3.x installs should install CP Field Inspect v. 1.0.7:
 
@@ -38,11 +45,11 @@ To install the plugin, follow these instructions.
 
         composer require mmikkel/cp-field-inspect
 
-3. In the Control Panel, go to Settings → Plugins and click the “Install” button for CP Field Inspect.
+3. In the Control Panel, go to Settings → Plugins and click the “Install” button for CP Field Inspect, or install via the CLI: `./craft plugin/install cp-field-inspect`
 
 ## Cogwheels not appearing?
 
-A semi-common issue with CP Field Inspect is that the field cogwheels do not appear, even if the currently logged in user has admin privileges. 
+A semi-common issue with CP Field Inspect is that the field links (i.e. cogwheels) do not appear, even if the currently logged in user has admin privileges. 
 
 This is most often due to the site having one or several [custom modules](https://docs.craftcms.com/v3/extend/module-guide.html) installed, that call `Craft::$app->getUser()->getIdentity()` or similar (i.e. to check the currently logged-in user's group affiliations or permissions) from their constructor or `init()` methods. This has been confirmed, due to [a bug in Craft](https://github.com/craftcms/cms/issues/2473), to prevent CP Field Inspect from displaying the cogwheels, since `Craft::$app->getUser()->getIsAdmin()` will actually return a false negative in plugins, in this scenario.  
 
@@ -54,7 +61,6 @@ Here's how the workaround can look (the below would go in your custom module's p
 public function init()
 {
     parent::init();
-    self::$instance = $this;
 
     // Defer further boot-up until after plugins have loaded
     Event::on(
