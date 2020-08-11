@@ -1,11 +1,16 @@
 (function (window) {
 
-    if (!window.Craft || !window.$) {
+    /** global: Craft */
+    /** global: Garnish */
+
+    if (!window.Craft || !window.Garnish || !window.$) {
         return false;
     }
 
     Craft.CpFieldInspectPlugin = {
+
         elementEditors: {},
+
         settings: {
             settingsClassSelector: 'cp-field-inspect-settings',
             infoClassSelector: 'cp-field-inspect-info',
@@ -19,6 +24,7 @@
                 '[value="commerce/product-types/save-product-type"]'
             ]
         },
+
         init: function (data) {
 
             var _this = this;
@@ -102,13 +108,14 @@
         },
 
         addFieldLinks: function () {
-            var self = this;
+
             var targets = [$(this.getFieldContextSelector())];
-            var $target;
 
             if (this.elementEditors && Object.keys(this.elementEditors).length) {
                 for (var key in this.elementEditors) {
-                    targets.push(this.elementEditors[key].$form);
+                    if (this.elementEditors.hasOwnProperty(key)) {
+                        targets.push(this.elementEditors[key].$form);
+                    }
                 }
             }
 
@@ -116,14 +123,14 @@
                 return;
             }
 
+            var _this = this;
+
             for (var i = 0; i < targets.length; ++i) {
 
-                $target = targets[i];
+                var $target = targets[i];
                 if (!$target || !$target.length) {
                     continue;
                 }
-
-                var _this = this;
 
                 var $copyFieldHandleButtons = $target.find('.field .heading [id$=-field-attribute].code:not([data-cpfieldlinks-inited])');
                 $copyFieldHandleButtons.each(function () {
@@ -201,21 +208,20 @@
             this.doRedirect(e.target.href);
         },
 
-        onMatrixBlockAddButtonClick: function (e) {
+        onMatrixBlockAddButtonClick: function () {
             Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
         },
 
         onAjaxComplete: function(e, status, requestData) {
-            if (requestData.url.indexOf('switch-entry-type') === -1) {
-                return;
+            if (requestData.url.indexOf('switch-entry-type') > -1) {
+                const $entryTypeSelect = $('#entryType');
+                if ($entryTypeSelect.length) {
+                    const typeId = $entryTypeSelect.val();
+                    $('[data-cpfieldlinks-sourcebtn][data-typeid]:not([data-typeid="' + typeId + '"]').hide();
+                    $('[data-cpfieldlinks-sourcebtn][data-typeid="' + typeId + '"]').show();
+                }
+                this.addFieldLinks();
             }
-            const $entryTypeSelect = $('#entryType');
-            if ($entryTypeSelect.length) {
-                const typeId = $entryTypeSelect.val();
-                $('[data-cpfieldlinks-sourcebtn][data-typeid]:not([data-typeid="' + typeId + '"]').hide();
-                $('[data-cpfieldlinks-sourcebtn][data-typeid="' + typeId + '"]').show();
-            }
-            this.addFieldLinks();
         }
     };
 
