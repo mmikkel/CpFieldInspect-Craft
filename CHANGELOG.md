@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased  
+## 1.2.0 - 2020-08-12  
 
 > {tip} Craft 3.5.3 finally adds a native "show and copy field handle" feature :tada: CP Field Inspect has been updated to work with this feature, by adding the field settings links (y'know, those little cogwheels) _inside_ the native "copy field handle" element. _One small thing to note_ is that due to these elements only being visible if `devMode` is enabled, CP Field Inspect's field settings links will also not display anymore if `devMode` is disabled (previously the links would render as long as the current user was an admin).  
 
