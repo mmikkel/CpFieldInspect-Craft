@@ -6,14 +6,13 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 1.2.0 - 2020-08-12  
 
-> {tip} Craft 3.5.3 finally adds a native "show and copy field handle" feature :tada: CP Field Inspect has been updated to work with this feature, by adding the field settings links (y'know, those little cogwheels) _inside_ the native "copy field handle" element. _One small thing to note_ is that due to these elements only being visible if `devMode` is enabled, CP Field Inspect's field settings links will also not display anymore if `devMode` is disabled (previously the links would render as long as the current user was an admin).  
+> {tip} Craft 3.5.3 finally adds a native "show and copy field handle" feature :tada: CP Field Inspect has been updated to work with this feature, by adding the field settings buttons (y'know, those little cogwheel links) _inside_ the native "copy field handle" element.  
 
 ### Changed
 - CP Field Inspect now requires Craft 3.5.3 or higher
 - Field settings links (those little cogwheels) now render inside the new "copy field handle" element added in Craft 3.5.3 (CP Field Inspect no longer adds the handle; that part is now a core feature)  
-- Field settings links no longer render without `devMode` enabled  
-- Field settings links no longer render in environments where `allowAdminChanges` is set to `false` 
-- Edit source buttons no longer render in environments where `allowAdminChanges` is set to `false`  
+- Field settings links no longer render if `devMode` is not enabled, or if `allowAdminChanges` is set to `false`   
+- Element source buttons no longer render if `devMode` is not enabled, or if `allowAdminChanges` is set to `false`    
 - The "Edit Users Settings" source button no longer renders when creating a new user  
 
 ## 1.1.3 - 2020-02-29

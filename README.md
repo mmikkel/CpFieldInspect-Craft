@@ -8,12 +8,11 @@ The plugin adds a little cogwheel link to your fields (hidden inside the "copy f
 
 Additionally, CP Field Inspect will add a link to your element editor forms to edit the element _source's_ (i.e.entry type, category group, asset volume etc) settings, in the same manner.  
 
-Not all users need to see these links, though. CP Field Inspect will do nothing if  
+These links shouldn't show up all the time, for everyone, though. CP Field Inspect will do nothing if  
 
-* The logged-in user is not an _admin_
-* `allowAdminChanges` is set to `false` in `config/general.php`
-
-Additionally, the field links will *not* display if `devMode` is set to `false`. This is due to the links being wrapped inside the native "copy field handle" element, which only displays if `devMode` is enabled.    
+* The logged-in user is not an _admin_  
+* [`allowAdminChanges`](https://craftcms.com/docs/3.x/config/config-settings.html#allowadminchanges) is set to `false`  
+* [`devMode`](https://craftcms.com/docs/3.x/config/config-settings.html#devmode) is set to `false`  
 
 ![Easily inspect field handles and edit fields](resources/img/demo.gif)
 

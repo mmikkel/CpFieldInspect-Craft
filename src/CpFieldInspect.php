@@ -76,9 +76,15 @@ class CpFieldInspect extends Plugin
         parent::init();
         self::$plugin = $this;
 
+        $config = Craft::$app->getConfig()->getGeneral();
+        if (!$config->allowAdminChanges || !$config->devMode) {
+            // Do nothing if admin changes aren't allowed, or devMode is disabled
+            return;
+        }
+
         $request = Craft::$app->getRequest();
         if (!$request->getIsCpRequest() || $request->getIsConsoleRequest()) {
-            // Do nothing if this is a console or site request
+            // Also do nothing if this is a console or site request
             return;
         }
 
@@ -154,17 +160,14 @@ class CpFieldInspect extends Plugin
             return;
         }
 
-        // Add source edit buttons if admin changes are allowed
-        if (Craft::$app->getConfig()->getGeneral()->allowAdminChanges) {
-            $view = Craft::$app->getView();
-            $view->hook('cp.assets.edit.meta', [$this, 'renderEditSourceLink']);
-            $view->hook('cp.entries.edit.meta', [$this, 'renderEditSourceLink']);
-            $view->hook('cp.globals.edit.content', [$this, 'renderEditSourceLink']);
-            $view->hook('cp.users.edit.details', [$this, 'renderEditSourceLink']);
-            $view->hook('cp.categories.edit.details', [$this, 'renderEditSourceLink']);
-            $view->hook('cp.commerce.product.edit.details', [$this, 'renderEditSourceLink']);
-            $view->hook('cp.commerce.order.edit.main-pane', [$this, 'renderEditSourceLink']);
-        }
+        $view = Craft::$app->getView();
+        $view->hook('cp.assets.edit.meta', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.entries.edit.meta', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.globals.edit.content', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.users.edit.details', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.categories.edit.details', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.commerce.product.edit.details', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.commerce.order.edit.main-pane', [$this, 'renderEditSourceLink']);
 
         $request = Craft::$app->getRequest();
         $isAjax = $request->getIsAjax() || $request->getAcceptsJson();
@@ -193,7 +196,6 @@ class CpFieldInspect extends Plugin
                 $data['fields'][$field->handle] = (int)$field->id;
             }
 
-            $view = Craft::$app->getView();
             $view->registerAssetBundle(CpFieldInspectBundle::class);
             $view->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data) . ');');
         }
