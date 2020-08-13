@@ -4,9 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.2.0 - 2020-08-12  
+## 1.2.1 - 2020-08-12  
 
 > {tip} Craft 3.5.3 finally adds a native "show and copy field handle" feature :tada: CP Field Inspect has been updated to work with this feature, by adding the field settings buttons (y'know, those little cogwheel links) _inside_ the native "copy field handle" element.  
+
+### Changed  
+- CP Field Inspect now requires Craft 3.5.4 or higher  
+- Field settings links and element source buttons no longer require `devMode`. They now show up if the new user preference "Show field handles in edit forms" (added in Craft 3.5.4) is enabled and `allowAdminChanges` is `true`  
+
+## 1.2.0 - 2020-08-12  
 
 ### Changed
 - CP Field Inspect now requires Craft 3.5.3 or higher

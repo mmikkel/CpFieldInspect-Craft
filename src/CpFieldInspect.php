@@ -77,8 +77,8 @@ class CpFieldInspect extends Plugin
         self::$plugin = $this;
 
         $config = Craft::$app->getConfig()->getGeneral();
-        if (!$config->allowAdminChanges || !$config->devMode) {
-            // Do nothing if admin changes aren't allowed, or devMode is disabled
+        if (!$config->allowAdminChanges) {
+            // Do nothing if admin changes aren't allowed
             return;
         }
 
@@ -156,10 +156,12 @@ class CpFieldInspect extends Plugin
     protected function doIt()
     {
         $user = Craft::$app->getUser();
-        if (!$user->getIsAdmin()) {
+        if (!$user->getIsAdmin() || !$user->getIdentity()->getPreference('showFieldHandles')) {
+            // Do nothing if the user is not an admin
             return;
         }
 
+        // Render edit source links
         $view = Craft::$app->getView();
         $view->hook('cp.assets.edit.meta', [$this, 'renderEditSourceLink']);
         $view->hook('cp.entries.edit.meta', [$this, 'renderEditSourceLink']);

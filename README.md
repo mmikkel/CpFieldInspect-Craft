@@ -4,23 +4,29 @@
 
 CP Field Inspect is a tiny utility plugin making content modelling a little bit easier in Craft.  
 
-The plugin adds a little cogwheel link to your fields (hidden inside the "copy field handle" element next to the field name). Clicking this link redirects you to that field's settings page - and back to your content when you save the settings.  
+The plugin adds a little cogwheel link to the field handles in element edit forms. Clicking this link redirects you to the fields' settings pages - and back to your content when you save the settings.  
 
-Additionally, CP Field Inspect will add a link to your element editor forms to edit the element _source's_ (i.e.entry type, category group, asset volume etc) settings, in the same manner.  
+Additionally, CP Field Inspect will add a link to your element edit forms for easy access to the element's source settings. This enables you to quickly tweak e.g. a entry type's field layout. And just like with the field settings, after saving the source settings CP Field Inspect redirects you back to the element edit page.  
 
-These links shouldn't show up all the time, for everyone, though. CP Field Inspect will do nothing if  
-
-* The logged-in user is not an _admin_  
-* [`allowAdminChanges`](https://craftcms.com/docs/3.x/config/config-settings.html#allowadminchanges) is set to `false`  
-* [`devMode`](https://craftcms.com/docs/3.x/config/config-settings.html#devmode) is set to `false`  
+_For Craft 3.0-3.4, CP Field Inspect also adds the field handle to the edit form. Since Craft 3.5 the field handles display as a core feature, and CP Field Inspect only adds the actual links._
 
 ![Easily inspect field handles and edit fields](resources/img/demo.gif)
 
 Plugin icon: CUSTOMIZE SEARCH by creative outlet from [the Noun Project](https://thenounproject.com)
 
+## The caveats!  
+
+CP Field Inspect will only add field settings links and element source buttons to your edit forms if  
+
+* The logged-in user is an **admin**  
+* The "Show field handles in edit forms" admin user preference is enabled (Craft 3.5.4+)  
+* [`allowAdminChanges`](https://craftcms.com/docs/3.x/config/config-settings.html#allowadminchanges) is `true`  
+
+If any of the above are false, CP Field Inspect will do absolutely nothing.  
+
 ## Requirements
 
-**This plugin requires Craft CMS 3.5.3 or later.**
+**This plugin requires Craft CMS 3.5.4 or later.**
 
 If you're on 3.4.2 or later, you should install CP Field Inspect v. 1.1.3:
 
@@ -46,11 +52,15 @@ To install the plugin, follow these instructions.
 
 3. In the Control Panel, go to Settings → Plugins and click the “Install” button for CP Field Inspect, or install via the CLI: `./craft plugin/install cp-field-inspect`
 
-## Cogwheels not appearing?
+## Cogwheels not appearing?  
 
-A semi-common issue with CP Field Inspect is that the field links (i.e. cogwheels) do not appear, even if the currently logged in user has admin privileges. 
+**If you're on Craft 3.5.4 or later, make sure the admin user preference "Show field handles in edit forms". If `allowAdminChanges` is `true`, the cogwheels _should_ appear at that point.  
 
-This is most often due to the site having one or several [custom modules](https://docs.craftcms.com/v3/extend/module-guide.html) installed, that call `Craft::$app->getUser()->getIdentity()` or similar (i.e. to check the currently logged-in user's group affiliations or permissions) from their constructor or `init()` methods. This has been confirmed, due to [a bug in Craft](https://github.com/craftcms/cms/issues/2473), to prevent CP Field Inspect from displaying the cogwheels, since `Craft::$app->getUser()->getIsAdmin()` will actually return a false negative in plugins, in this scenario.  
+![Easily inspect field handles and edit fields](show-field-handles-preference.png)  
+
+### Still nothing?  
+
+If the cogwheels don't appear if you're logged in as an admin, `allowAdminChanges` is true _and_ the "Show field handles" user preference is enabled, the reason is most likely due to the site having one or several plugins or [custom modules](https://docs.craftcms.com/v3/extend/module-guide.html) installed, that call `Craft::$app->getUser()->getIdentity()` or related methods from within their constructor or `init()` methods. This has been confirmed, due to [a bug in Craft](https://github.com/craftcms/cms/issues/2473), to prevent CP Field Inspect from displaying the cogwheels, since `Craft::$app->getUser()->getIsAdmin()` will actually return a false negative in plugins, in this scenario.  
 
 The workaround is to defer any calls to `Craft::$app->getUser()` (such as `Craft::$app->getUser()->getIdentity()` etc) in the offending custom module to the `Plugins::AFTER_LOAD_PLUGINS` event; essentially letting plugins like CP Field Inspect load before calling that method (in Craft 3, modules are loaded before plugins).  
 
