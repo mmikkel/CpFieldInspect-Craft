@@ -6,7 +6,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## 1.2.1 - 2020-08-13  
 
-> {tip} Craft 3.5.3 finally adds a native "show and copy field handle" feature :tada: CP Field Inspect has been updated to work with this feature, by adding the field settings buttons (y'know, those little cogwheel links) _inside_ the native "copy field handle" element.  
+> {tip} Craft 3.5.3 finally added a native "show and copy field handle" feature :tada: CP Field Inspect has been updated to work with this feature, by adding the field settings buttons (y'know, those little cogwheel links) _inside_ the native "copy field handle" element.  
 
 ### Changed  
 - CP Field Inspect now requires Craft 3.5.4 or higher  
