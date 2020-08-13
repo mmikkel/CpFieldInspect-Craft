@@ -54,7 +54,7 @@ To install the plugin, follow these instructions.
 
 ## Cogwheels not appearing?  
 
-**If you're on Craft 3.5.4 or later, make sure the admin user preference "Show field handles in edit forms". If `allowAdminChanges` is `true`, the cogwheels _should_ appear at that point.  
+If you're on Craft 3.5.4 or later, make sure the admin user preference "Show field handles in edit forms". If `allowAdminChanges` is `true`, the cogwheels _should_ appear at that point.  
 
 ![The "show field handles" user preference is required](resources/img/show-field-handles-preference.png)  
 
