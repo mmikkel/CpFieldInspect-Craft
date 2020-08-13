@@ -8,9 +8,9 @@ The plugin adds a little cogwheel link to the field handles in element edit form
 
 Additionally, CP Field Inspect will add a link to your element edit forms for easy access to the element's source settings. This enables you to quickly tweak e.g. a entry type's field layout. And just like with the field settings, after saving the source settings CP Field Inspect redirects you back to the element edit page.  
 
-_For Craft 3.0-3.4, CP Field Inspect also adds the field handle to the edit form. Since Craft 3.5 the field handles display as a core feature, and CP Field Inspect only adds the actual links._
+![Easily inspect field handles and edit fields](resources/img/demo.gif)  
 
-![Easily inspect field handles and edit fields](resources/img/demo.gif)
+_For Craft 3.0 -> 3.4, CP Field Inspect also adds the actual field handles to the edit forms. Since Craft 3.5 the field handles is added to the edit forms as a core feature, and CP Field Inspect only adds the actual links._
 
 Plugin icon: CUSTOMIZE SEARCH by creative outlet from [the Noun Project](https://thenounproject.com)
 
