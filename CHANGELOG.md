@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 1.2.1 - 2020-08-12  
+## 1.2.1 - 2020-08-13  
 
 > {tip} Craft 3.5.3 finally adds a native "show and copy field handle" feature :tada: CP Field Inspect has been updated to work with this feature, by adding the field settings buttons (y'know, those little cogwheel links) _inside_ the native "copy field handle" element.  
 
