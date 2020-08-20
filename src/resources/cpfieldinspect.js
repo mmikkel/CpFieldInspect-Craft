@@ -143,9 +143,21 @@
                     var $btn = $(this);
                     $btn.attr('data-cpfieldlinks-inited', true);
 
-                    var field = $btn.parents('.field').get().slice(-1).pop();
-                    if (!field) {
+                    var rootField = $btn.parents('.field').get().slice(-1).pop();
+                    var parentField = $btn.closest('.field');
+                    if (!rootField || !parentField) {
                         return;
+                    }
+
+                    var field;
+                    var rootFieldType = $(rootField).data('type');
+
+                    switch (rootFieldType) {
+                        case 'benf\\neo\\Field':
+                            field = parentField;
+                            break;
+                        default:
+                            field = rootField;
                     }
 
                     var fieldId = _this.getFieldId(field);

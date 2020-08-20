@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ### Improved
 - Restored the ability to open up field and/or element source settings via the cogwheels in a new tab, by holding down the Cmd (Mac) or Ctrl (Windows) key
+- Improved support for Neo fields
 
 ## 1.2.1 - 2020-08-13  
 
