@@ -67,7 +67,11 @@
             Garnish.$doc
                 .on('click', '[data-cpfieldlinks-sourcebtn]', $.proxy(this.onSourceEditBtnClick, this))
                 .on('click', '.matrix .btn.add, .matrix .btn[data-type]', $.proxy(this.onMatrixBlockAddButtonClick, this))
+                .on('keydown', $.proxy(this.onKeyDown, this))
+                .on('keyup', $.proxy(this.onKeyUp, this))
                 .ajaxComplete($.proxy(this.onAjaxComplete, this));
+
+            window.onblur = this.onWindowBlur;
 
             Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
         },
@@ -165,8 +169,12 @@
         },
 
         doRedirect: function (href) {
-            Craft.setLocalStorage(this.settings.redirectKey, this.data.redirectUrl || null);
-            window.location.href = href;
+            if (this.ctrlKeyDown) {
+                window.open(href);
+            } else {
+                Craft.setLocalStorage(this.settings.redirectKey, this.data.redirectUrl || null);
+                window.location.href = href;
+            }
         },
 
         redirectToFieldSettings: function (fieldId) {
@@ -211,6 +219,18 @@
 
         onMatrixBlockAddButtonClick: function () {
             Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
+        },
+
+        onKeyDown: function(e) {
+            this.ctrlKeyDown = Garnish.isCtrlKeyPressed(e);
+        },
+
+        onKeyUp: function () {
+            this.ctrlKeyDown = false;
+        },
+
+        onWindowBlur: function () {
+            this.ctrlKeyDown = false;
         },
 
         onAjaxComplete: function(e, status, requestData) {

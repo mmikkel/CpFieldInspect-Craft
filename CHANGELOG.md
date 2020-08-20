@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+### Improved
+- Restored the ability to open up field and/or element source settings via the cogwheels in a new tab, by holding down the Cmd (Mac) or Ctrl (Windows) key
+
 ## 1.2.1 - 2020-08-13  
 
 > {tip} Craft 3.5.3 finally added a native "show and copy field handle" feature :tada: CP Field Inspect has been updated to work with this feature, by adding the field settings buttons (y'know, those little cogwheel links) _inside_ the native "copy field handle" element.  
