@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 1.2.2 - 2020-08-20
 
 ### Improved
 - Restored the ability to open up field and/or element source settings via the cogwheels in a new tab, by holding down the Cmd (Mac) or Ctrl (Windows) key
