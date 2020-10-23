@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.3 - 2020-10-23
+
+### Improved  
+- Restored the old Cmd/Ctrl + S shortcut behaviour that was changed in Craft 3.5.10. If the user opens up the field settings via CP Field Inspect's cogwheel links, saving the field settings using the keyboard shortcut will now redirect the user back to the element edit form, like in Craft versions prior to 3.5.10.  
+
+### Changed  
+- CP Field Inspect now requires Craft 3.5.10 or later  
+
 ## 1.2.2 - 2020-08-20
 
 ### Improved

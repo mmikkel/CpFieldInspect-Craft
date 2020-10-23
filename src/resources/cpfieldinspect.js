@@ -108,6 +108,23 @@
                 if ($actionInput.length > 0 && $redirectInput.length > 0) {
                     $redirectInput.attr('value', redirectTo);
                 }
+                // Override the new save shortcut behaviour in Craft 3.5.10
+                var $primaryForm = Craft.cp.$primaryForm;
+                if (
+                    $primaryForm.length &&
+                    $primaryForm.find('input[name="action"]').val() === 'fields/save-field' &&
+                    Garnish.hasAttr($primaryForm, 'data-saveshortcut') &&
+                    !!Craft.cp.submitPrimaryForm
+                ) {
+                    Garnish.shortcutManager.unregisterShortcut({ keyCode: Garnish.S_KEY, ctrl: true });
+                    Garnish.shortcutManager.registerShortcut({ keyCode: Garnish.S_KEY, ctrl: true }, () => {
+                        Craft.cp.submitPrimaryForm({ redirect: redirectTo, retainScroll: false });
+                    });
+                    var submitBtn = ($primaryForm.find('.btn.submit.menubtn').data() || {}).menubtn || null;
+                    if (submitBtn && submitBtn.menu) {
+                        $(submitBtn.menu.$options[0]).find('span.shortcut').remove();
+                    }
+                }
             }
             Craft.setLocalStorage(this.settings.redirectKey, null);
         },
@@ -235,6 +252,9 @@
 
         onKeyDown: function(e) {
             this.ctrlKeyDown = Garnish.isCtrlKeyPressed(e);
+            setTimeout(function () {
+                this.ctrlKeyDown = false;
+            }, 1000);
         },
 
         onKeyUp: function () {
