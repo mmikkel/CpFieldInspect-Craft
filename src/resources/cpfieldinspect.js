@@ -154,7 +154,8 @@
                     continue;
                 }
 
-                var $copyFieldHandleButtons = $target.find('.field .heading [id$=-field-attribute].code:not([data-cpfieldlinks-inited])');
+                var $copyFieldHandleButtons = $target.find('.field .heading [id$=-attribute].copytextbtn:not([data-cpfieldlinks-inited])');
+
                 $copyFieldHandleButtons.each(function () {
 
                     var $btn = $(this);
