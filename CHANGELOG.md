@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased  
+### Fixed  
+- Fixes click behaviour for the cogwheel when holding down the Cmd/Ctrl key or the middle mouse button to open field settings in a new browser tab. Resolves #17  
+
 ## 1.2.4 - 2021-01-27
 
 ### Fixed  

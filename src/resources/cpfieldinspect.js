@@ -67,11 +67,7 @@
             Garnish.$doc
                 .on('click', '[data-cpfieldlinks-sourcebtn]', $.proxy(this.onSourceEditBtnClick, this))
                 .on('click', '.matrix .btn.add, .matrix .btn[data-type]', $.proxy(this.onMatrixBlockAddButtonClick, this))
-                .on('keydown', $.proxy(this.onKeyDown, this))
-                .on('keyup', $.proxy(this.onKeyUp, this))
                 .ajaxComplete($.proxy(this.onAjaxComplete, this));
-
-            window.onblur = this.onWindowBlur;
 
             Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
         },
@@ -183,12 +179,25 @@
                         return;
                     }
 
+                    var url = Craft.CpFieldInspectPlugin.data.baseEditFieldUrl + '/' + fieldId;
                     $btn
                         .append('<span data-icon="settings" title="' + (_this.data.editFieldBtnLabel || 'Edit field settings') + '" />')
+                        .on('mouseup', '[data-icon="settings"]', function (e) {
+                            if (e.which === Garnish.PRIMARY_CLICK || e.which === Garnish.SECONDARY_CLICK) {
+                                return;
+                            }
+                            e.preventDefault();
+                            e.stopPropagation();
+                            window.open(url);
+                        })
                         .on('click', '[data-icon="settings"]', function (e) {
                             e.preventDefault();
                             e.stopPropagation();
-                            _this.redirectToFieldSettings(fieldId);
+                            if (Garnish.isCtrlKeyPressed(e)) {
+                                window.open(url);
+                                return;
+                            }
+                            _this.doRedirect(url);
                         });
 
                 }).on('mouseleave', function () {
@@ -199,17 +208,8 @@
         },
 
         doRedirect: function (href) {
-            if (this.ctrlKeyDown) {
-                window.open(href);
-            } else {
-                Craft.setLocalStorage(this.settings.redirectKey, this.data.redirectUrl || null);
-                window.location.href = href;
-            }
-        },
-
-        redirectToFieldSettings: function (fieldId) {
-            var href = Craft.CpFieldInspectPlugin.data.baseEditFieldUrl + '/' + fieldId;
-            this.doRedirect(href);
+            Craft.setLocalStorage(this.settings.redirectKey, this.data.redirectUrl || null);
+            window.location.href = href;
         },
 
         getFieldId: function (field) {
@@ -249,21 +249,6 @@
 
         onMatrixBlockAddButtonClick: function () {
             Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
-        },
-
-        onKeyDown: function(e) {
-            this.ctrlKeyDown = Garnish.isCtrlKeyPressed(e);
-            setTimeout(function () {
-                this.ctrlKeyDown = false;
-            }, 1000);
-        },
-
-        onKeyUp: function () {
-            this.ctrlKeyDown = false;
-        },
-
-        onWindowBlur: function () {
-            this.ctrlKeyDown = false;
         },
 
         onAjaxComplete: function(e, status, requestData) {
