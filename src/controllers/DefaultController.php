@@ -35,6 +35,10 @@ class DefaultController extends Controller
         if ($queryString) {
             $redirectTo .= "?{$queryString}";
         }
+        $hashbang = \parse_url($url, PHP_URL_FRAGMENT);
+        if ($hashbang) {
+            $redirectTo .= "#{$hashbang}";
+        }
         return $this->asJson([
             'data' => Craft::$app->getSecurity()->hashData($redirectTo),
         ]);

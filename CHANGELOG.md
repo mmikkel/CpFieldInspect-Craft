@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 ### Fixed  
 - Fixes click behaviour for the cogwheel when holding down the Cmd/Ctrl key or the middle mouse button to open field settings in a new browser tab. Resolves #17  
 
+### Improved  
+- CP Field Inspect now redirects back to the active field layout tab. Resolves #20  
+
 ## 1.2.4 - 2021-01-27
 
 ### Fixed  

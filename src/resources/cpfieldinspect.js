@@ -47,7 +47,7 @@
             livePreviewPoller();
 
             // Poll for address bar change
-            var url = window.location.href;
+            var url = null;
             this.addressBarChangeInterval = setInterval(function () {
                 var newUrl = window.location.href;
                 if (newUrl === url) {
@@ -57,6 +57,7 @@
                 try {
                     Craft.postActionRequest('cp-field-inspect/default/get-redirect-hash', { url: url }, $.proxy(function (response) {
                         this.data.redirectUrl = response.data || this.data.redirectUrl || null;
+                        console.log('set redirect url', this.data.redirectUrl);
                     }, _this));
                 } catch (error) {
                     console.error(error);
@@ -98,6 +99,7 @@
 
         setPathAndRedirect: function () {
             var redirectTo = Craft.getLocalStorage(this.settings.redirectKey);
+            console.log({ redirectTo });
             if (redirectTo) {
                 var $actionInput = $('input[type="hidden"][name="action"]').filter(this.settings.actionInputKeys.join(','));
                 var $redirectInput = $('input[type="hidden"][name="redirect"]');
