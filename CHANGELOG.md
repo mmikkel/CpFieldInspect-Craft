@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.2.6 - 2022-02-17
+### Fixed
+- Fixes a JavaScript error that could occur when XHR errors happened in the control panel
+
 ## 1.2.5 - 2021-05-17  
 ### Fixed  
 - Fixes click behaviour for the cogwheel when holding down the Cmd/Ctrl key or the middle mouse button to open field settings in a new browser tab. Resolves #17  

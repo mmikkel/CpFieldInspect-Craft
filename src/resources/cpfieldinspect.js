@@ -56,7 +56,7 @@
                 url = newUrl;
                 try {
                     Craft.postActionRequest('cp-field-inspect/default/get-redirect-hash', { url: url }, $.proxy(function (response) {
-                        this.data.redirectUrl = response.data || this.data.redirectUrl || null;
+                        this.data.redirectUrl = response && response.data ? response.data : (this.data.redirectUrl || null);
                     }, _this));
                 } catch (error) {
                     console.error(error);
