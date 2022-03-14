@@ -22,7 +22,8 @@
                 '[value="globals/save-set"]',
                 '[value="categories/save-group"]',
                 '[value="volumes/save-volume"]',
-                '[value="commerce/product-types/save-product-type"]'
+                '[value="users/save-field-layout"]',
+                '[value="commerce/product-types/save-product-type"]',
             ]
         },
 
@@ -98,18 +99,20 @@
 
         setPathAndRedirect: function () {
             var redirectTo = Craft.getLocalStorage(this.settings.redirectKey);
-            console.log({ redirectTo });
             if (redirectTo) {
                 var $actionInput = $('input[type="hidden"][name="action"]').filter(this.settings.actionInputKeys.join(','));
                 var $redirectInput = $('input[type="hidden"][name="redirect"]');
-                if ($actionInput.length > 0 && $redirectInput.length > 0) {
-                    $redirectInput.attr('value', redirectTo);
+                if ($actionInput.length > 0) {
+                    if ($redirectInput.length > 0) {
+                        $redirectInput.attr('value', redirectTo);
+                    } else {
+                        $actionInput.after('<input type="hidden" name="redirect" value="' + redirectTo +'" />');
+                    }
                 }
-                // Override the new save shortcut behaviour in Craft 3.5.10
+                // Override the new save shortcut behaviour in Craft 3.5.10+
                 var $primaryForm = Craft.cp.$primaryForm;
                 if (
                     $primaryForm.length &&
-                    $primaryForm.find('input[name="action"]').val() === 'fields/save-field' &&
                     Garnish.hasAttr($primaryForm, 'data-saveshortcut') &&
                     !!Craft.cp.submitPrimaryForm
                 ) {

@@ -2,3 +2,7 @@
 [data-cpfieldlinks-inited] span[data-icon="settings"]:active {
     color: #0B69A3;
 }
+
+.slideout-container [data-cpfieldlinks-sourcebtnwrapper] {
+    display: none !important;
+}

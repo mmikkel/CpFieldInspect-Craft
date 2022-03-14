@@ -11,9 +11,16 @@
 namespace mmikkel\cpfieldinspect;
 
 use Craft;
+use craft\base\Element;
 use craft\base\ElementInterface;
 use craft\base\Plugin;
+use craft\commerce\elements\Product;
 use craft\elements\Asset;
+use craft\elements\Category;
+use craft\elements\Entry;
+use craft\elements\GlobalSet;
+use craft\elements\User;
+use craft\events\DefineHtmlEvent;
 use craft\events\PluginEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Plugins;
@@ -107,44 +114,6 @@ class CpFieldInspect extends Plugin
         );
     }
 
-    /**
-     * @return string
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
-     * @throws \Twig\Error\LoaderError
-     * @throws \yii\base\Exception
-     */
-    public function renderEditSourceLink(array $context)
-    {
-        $entry = $context['entry'] ?? null;
-        if ($entry) {
-            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-entry-type-link', $context);
-        }
-        $asset = ($context['element'] ?? null) && $context['element'] instanceof Asset ? $context['element'] : null;
-        if ($asset !== null) {
-            $context['asset'] = $context['element'];
-            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-volume-link', $context);
-        }
-        $globalSet = $context['globalSet'] ?? null;
-        if ($globalSet) {
-            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-globalset-link', $context);
-        }
-        $user = $context['user'] ?? null;
-        if ($user) {
-            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-users-link', $context);
-        }
-        $category = $context['category'] ?? null;
-        if ($category) {
-            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-category-group-link', $context);
-        }
-        $product = $context['product'] ?? null;
-        if ($product) {
-            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-commerce-product-type-link', $context);
-        }
-        return '';
-    }
-
     // Protected Methods
     // =========================================================================
 
@@ -154,21 +123,41 @@ class CpFieldInspect extends Plugin
      */
     protected function doIt()
     {
+
         $user = Craft::$app->getUser();
+
         if (!$user->getIsAdmin() || !$user->getIdentity()->getPreference('showFieldHandles')) {
             // Do nothing if the user is not an admin
             return;
         }
 
         // Render edit source links
-        $view = Craft::$app->getView();
-        $view->hook('cp.assets.edit.meta', fn(array $context): string => $this->renderEditSourceLink($context));
-        $view->hook('cp.entries.edit.meta', fn(array $context): string => $this->renderEditSourceLink($context));
-        $view->hook('cp.globals.edit.content', fn(array $context): string => $this->renderEditSourceLink($context));
-        $view->hook('cp.users.edit.details', fn(array $context): string => $this->renderEditSourceLink($context));
-        $view->hook('cp.categories.edit.details', fn(array $context): string => $this->renderEditSourceLink($context));
-        $view->hook('cp.commerce.product.edit.details', fn(array $context): string => $this->renderEditSourceLink($context));
-        $view->hook('cp.commerce.order.edit.main-pane', fn(array $context): string => $this->renderEditSourceLink($context));
+        if (\version_compare(Craft::$app->getVersion(), '4.0', '<')) {
+
+            // Legacy template hooks for entries, assets and categories on Craft 3.x
+            Craft::$app->getView()->hook('cp.entries.edit.meta', fn(array $context): string => $this->renderEditSourceLink($context));
+            Craft::$app->getView()->hook('cp.assets.edit.meta', fn(array $context): string => $this->renderEditSourceLink($context));
+            Craft::$app->getView()->hook('cp.categories.edit.details', fn(array $context): string => $this->renderEditSourceLink($context));
+
+        } else {
+
+            // Use the EVENT_DEFINE_META_FIELDS_HTML event to inject source buttons for Craft 4
+            Event::on(
+                Element::class,
+                Element::EVENT_DEFINE_META_FIELDS_HTML,
+                function (DefineHtmlEvent $event) {
+                    if ($event->static) {
+                        return;
+                    }
+                    $event->html .= $this->renderEditSourceLink(['element' => $event->sender]);
+                }
+            );
+        }
+
+        // Hooks that work on Craft 3.x and 4.x
+        Craft::$app->getView()->hook('cp.globals.edit.content', fn(array $context): string => $this->renderEditSourceLink(['element' => $context['globalSet'] ?? null]));
+        Craft::$app->getView()->hook('cp.users.edit.details', fn(array $context): string => $this->renderEditSourceLink(['element' => $context['user'] ?? null]));
+        Craft::$app->getView()->hook('cp.commerce.product.edit.details', fn(array $context): string => $this->renderEditSourceLink(['element' => $context['product'] ?? null]));
 
         $request = Craft::$app->getRequest();
         $isAjax = $request->getIsAjax() || $request->getAcceptsJson();
@@ -197,9 +186,41 @@ class CpFieldInspect extends Plugin
                 $data['fields'][$field->handle] = (int)$field->id;
             }
 
-            $view->registerAssetBundle(CpFieldInspectBundle::class);
-            $view->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data, JSON_THROW_ON_ERROR) . ');');
+            Craft::$app->getView()->registerAssetBundle(CpFieldInspectBundle::class);
+            Craft::$app->getView()->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data, JSON_THROW_ON_ERROR) . ');');
         }
+    }
+
+    /**
+     * @return string
+     * @throws \Twig\Error\LoaderError
+     * @throws \Twig\Error\RuntimeError
+     * @throws \Twig\Error\SyntaxError
+     * @throws \Twig\Error\LoaderError
+     * @throws \yii\base\Exception
+     */
+    protected function renderEditSourceLink(array $context): string
+    {
+        $element = $context['element'] ?? $context['entry'] ?? $context['asset'] ?? $context['globalSet'] ?? $context['user'] ?? $context['category'] ?? $context['product'] ?? null;
+        if ($element instanceof Entry) {
+            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-entry-type-link', ['entry' => $element]);
+        }
+        if ($element instanceof Asset) {
+            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-volume-link', ['asset' => $element]);
+        }
+        if ($element instanceof GlobalSet) {
+            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-globalset-link', ['globalSet' => $element]);
+        }
+        if ($element instanceof User) {
+            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-users-link', ['user' => $element]);
+        }
+        if ($element instanceof Category) {
+            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-category-group-link', ['category' => $element]);
+        }
+        if ($element instanceof Product) {
+            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-commerce-product-type-link', ['product' => $element]);
+        }
+        return '';
     }
 
 }

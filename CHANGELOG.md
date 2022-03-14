@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.0 - 2022-03-14
+### Added
+- Added Craft 4.0 compatibility
+- Added new and improved (although still quite hideous) icon!
+
+### Fixed
+- Fixed an issue where editing the users field layout via the "Edit Users Setting" source button would not redirect back to the user edit page
+- Fixed an issue where CP Field Inspect would not override the save shortcut for element sources
+
 ## 1.2.6 - 2022-02-17
 ### Fixed
 - Fixes a JavaScript error that could occur when XHR errors happened in the control panel

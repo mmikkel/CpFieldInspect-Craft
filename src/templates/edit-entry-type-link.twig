@@ -1,20 +1,20 @@
 {% if entry ?? null %}
 
-    {% set section = element.getSection() %}
+    {% set section = entry.getSection() %}
     {% set entryTypes = section.getEntryTypes() %}
 
     {% set label = 'Edit Entry Type'|t('cp-field-inspect') %}
 
-    <div class="data" style="padding-top:20px;padding-bottom:10px;">
+    <div class="data" style="padding-top:15px;padding-bottom:20px;" data-cpfieldlinks-sourcebtnwrapper>
         <p>
             {% for entryType in entryTypes %}
-                {% filter attr({
+                {% apply attr({
                     'data-typeid': entryType.id,
                     style: entryType.id != entry.typeId ? 'display:none;' : false
                 }) %}
                     {% set editUri = 'settings/sections/' ~ section.id ~ '/entrytypes/' ~ entryType.id %}
                     {% include 'cp-field-inspect/_includes/edit-source-link.twig' %}
-                {% endfilter %}
+                {% endapply %}
             {% endfor %}
         </p>
     </div>

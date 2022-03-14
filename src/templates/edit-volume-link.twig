@@ -1,9 +1,9 @@
 {% if asset ?? null %}
 
-    {% set editUri = 'settings/assets/volumes/' ~ element.volumeId %}
+    {% set editUri = 'settings/assets/volumes/' ~ asset.volumeId %}
     {% set label = 'Edit Volume'|t('cp-field-inspect') %}
 
-    <div class="data" style="padding-top:20px;padding-bottom:10px;">
+    <div class="data" style="padding-top:15px;padding-bottom:20px;" data-cpfieldlinks-sourcebtnwrapper>
         <p>
             {% include 'cp-field-inspect/_includes/edit-source-link.twig' %}
         </p>
