@@ -10,6 +10,5 @@ use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigura
 return static function (ContainerConfigurator $containerConfigurator): void {
     $containerConfigurator->import(CraftSetList::CRAFT_CMS_40);
     $containerConfigurator->import(SetList::CODE_QUALITY);
-    $containerConfigurator->import(SetList::DEAD_CODE);
-    $containerConfigurator->import(LevelSetList::UP_TO_PHP_80);
+    $containerConfigurator->import(LevelSetList::UP_TO_PHP_72);
 };
