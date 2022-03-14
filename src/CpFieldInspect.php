@@ -108,12 +108,11 @@ class CpFieldInspect extends Plugin
     }
 
     /**
-     * @param array $context
      * @return string
      * @throws \Twig\Error\LoaderError
      * @throws \Twig\Error\RuntimeError
      * @throws \Twig\Error\SyntaxError
-     * @throws \Twig_Error_Loader
+     * @throws \Twig\Error\LoaderError
      * @throws \yii\base\Exception
      */
     public function renderEditSourceLink(array $context)
@@ -123,7 +122,7 @@ class CpFieldInspect extends Plugin
             return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-entry-type-link', $context);
         }
         $asset = ($context['element'] ?? null) && $context['element'] instanceof Asset ? $context['element'] : null;
-        if ($asset) {
+        if ($asset !== null) {
             $context['asset'] = $context['element'];
             return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-volume-link', $context);
         }
@@ -163,13 +162,13 @@ class CpFieldInspect extends Plugin
 
         // Render edit source links
         $view = Craft::$app->getView();
-        $view->hook('cp.assets.edit.meta', [$this, 'renderEditSourceLink']);
-        $view->hook('cp.entries.edit.meta', [$this, 'renderEditSourceLink']);
-        $view->hook('cp.globals.edit.content', [$this, 'renderEditSourceLink']);
-        $view->hook('cp.users.edit.details', [$this, 'renderEditSourceLink']);
-        $view->hook('cp.categories.edit.details', [$this, 'renderEditSourceLink']);
-        $view->hook('cp.commerce.product.edit.details', [$this, 'renderEditSourceLink']);
-        $view->hook('cp.commerce.order.edit.main-pane', [$this, 'renderEditSourceLink']);
+        $view->hook('cp.assets.edit.meta', fn(array $context): string => $this->renderEditSourceLink($context));
+        $view->hook('cp.entries.edit.meta', fn(array $context): string => $this->renderEditSourceLink($context));
+        $view->hook('cp.globals.edit.content', fn(array $context): string => $this->renderEditSourceLink($context));
+        $view->hook('cp.users.edit.details', fn(array $context): string => $this->renderEditSourceLink($context));
+        $view->hook('cp.categories.edit.details', fn(array $context): string => $this->renderEditSourceLink($context));
+        $view->hook('cp.commerce.product.edit.details', fn(array $context): string => $this->renderEditSourceLink($context));
+        $view->hook('cp.commerce.order.edit.main-pane', fn(array $context): string => $this->renderEditSourceLink($context));
 
         $request = Craft::$app->getRequest();
         $isAjax = $request->getIsAjax() || $request->getAcceptsJson();
@@ -199,7 +198,7 @@ class CpFieldInspect extends Plugin
             }
 
             $view->registerAssetBundle(CpFieldInspectBundle::class);
-            $view->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data) . ');');
+            $view->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data, JSON_THROW_ON_ERROR) . ');');
         }
     }
 
