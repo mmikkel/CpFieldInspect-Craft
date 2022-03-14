@@ -135,9 +135,15 @@ class CpFieldInspect extends Plugin
         if (\version_compare(Craft::$app->getVersion(), '4.0', '<')) {
 
             // Legacy template hooks for entries, assets and categories on Craft 3.x
-            Craft::$app->getView()->hook('cp.entries.edit.meta', fn(array $context): string => $this->renderEditSourceLink($context));
-            Craft::$app->getView()->hook('cp.assets.edit.meta', fn(array $context): string => $this->renderEditSourceLink($context));
-            Craft::$app->getView()->hook('cp.categories.edit.details', fn(array $context): string => $this->renderEditSourceLink($context));
+            Craft::$app->getView()->hook('cp.entries.edit.meta', function (array $context) {
+                return $this->renderEditSourceLink($context);
+            });
+            Craft::$app->getView()->hook('cp.assets.edit.meta', function (array $context) {
+                return $this->renderEditSourceLink($context);
+            });
+            Craft::$app->getView()->hook('cp.categories.edit.details', function (array $context) {
+                return $this->renderEditSourceLink($context);
+            });
 
         } else {
 
@@ -155,9 +161,15 @@ class CpFieldInspect extends Plugin
         }
 
         // Hooks that work on Craft 3.x and 4.x
-        Craft::$app->getView()->hook('cp.globals.edit.content', fn(array $context): string => $this->renderEditSourceLink(['element' => $context['globalSet'] ?? null]));
-        Craft::$app->getView()->hook('cp.users.edit.details', fn(array $context): string => $this->renderEditSourceLink(['element' => $context['user'] ?? null]));
-        Craft::$app->getView()->hook('cp.commerce.product.edit.details', fn(array $context): string => $this->renderEditSourceLink(['element' => $context['product'] ?? null]));
+        Craft::$app->getView()->hook('cp.globals.edit.content', function (array $context) {
+            return $this->renderEditSourceLink($context);
+        });
+        Craft::$app->getView()->hook('cp.users.edit.details', function (array $context) {
+            return $this->renderEditSourceLink($context);
+        });
+        Craft::$app->getView()->hook('cp.commerce.product.edit.details', function (array $context) {
+            return $this->renderEditSourceLink($context);
+        });
 
         $request = Craft::$app->getRequest();
         $isAjax = $request->getIsAjax() || $request->getAcceptsJson();
@@ -187,7 +199,7 @@ class CpFieldInspect extends Plugin
             }
 
             Craft::$app->getView()->registerAssetBundle(CpFieldInspectBundle::class);
-            Craft::$app->getView()->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data, JSON_THROW_ON_ERROR) . ');');
+            Craft::$app->getView()->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data) . ');');
         }
     }
 
