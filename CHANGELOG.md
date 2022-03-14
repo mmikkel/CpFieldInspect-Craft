@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.0.0 - 2022-03-14
+## 1.3.0 - 2022-03-14
 ### Added
 - Added Craft 4.0 compatibility
 - Added new and improved (although still quite hideous) icon!
