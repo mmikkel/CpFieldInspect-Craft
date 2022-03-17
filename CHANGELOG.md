@@ -4,10 +4,16 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.3.1
+### Fixed
+- Fixes a minor styling issue for the field settings cogwheels on Craft 3.7.37+ and 4.0.0-beta.2+  
+
 ## 1.3.0 - 2022-03-14
 ### Added
-- Added Craft 4.0 compatibility
-- Added new and improved (although still quite hideous) icon!
+- Added Craft 4.0 compatibility  
+
+### Changed
+- Improved plugin icon  
 
 ### Fixed
 - Fixed an issue where editing the users field layout via the "Edit Users Setting" source button would not redirect back to the user edit page

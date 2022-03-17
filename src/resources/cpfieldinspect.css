@@ -3,6 +3,10 @@
     color: #0B69A3;
 }
 
+[data-cpfieldlinks-inited].copytextbtn:not(.copytextbtn-expand-l):not(.copytextbtn-expand-r) span[data-icon="settings"] {
+    margin-top: 0;
+}
+
 .slideout-container [data-cpfieldlinks-sourcebtnwrapper] {
     display: none !important;
 }
