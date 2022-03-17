@@ -39,7 +39,7 @@ class DefaultController extends Controller
             $redirectTo .= "#{$hashbang}";
         }
         return $this->asJson([
-            'data' => Craft::$app->getSecurity()->hashData($redirectTo),
+            'data' => Craft::$app->getSecurity()->hashData($redirectTo, Craft::$app->getConfig()->getGeneral()->securityKey),
         ]);
     }
 

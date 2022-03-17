@@ -124,10 +124,10 @@ class CpFieldInspect extends Plugin
     protected function doIt()
     {
 
-        $user = Craft::$app->getUser();
-
-        if (!$user->getIsAdmin() || !$user->getIdentity()->getPreference('showFieldHandles')) {
-            // Do nothing if the user is not an admin
+        /** @var User|null $user */
+        $user = Craft::$app->getUser()->getIdentity();
+        if (!$user || !$user->admin || !$user->getPreference('showFieldHandles')) {
+            // Do nothing if the user is not an admin, or if field handles aren't visible
             return;
         }
 
@@ -190,7 +190,7 @@ class CpFieldInspect extends Plugin
             $data = [
                 'editFieldBtnLabel' => Craft::t('cp-field-inspect', 'Edit field settings'),
                 'baseEditFieldUrl' => \rtrim(UrlHelper::cpUrl('settings/fields/edit'), '/'),
-                'redirectUrl' => Craft::$app->getSecurity()->hashData($redirectUrl),
+                'redirectUrl' => Craft::$app->getSecurity()->hashData($redirectUrl, Craft::$app->getConfig()->getGeneral()->securityKey),
             ];
 
             $fields = Craft::$app->getFields()->getAllFields('global');
