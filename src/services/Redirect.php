@@ -26,7 +26,7 @@ class Redirect extends Component
         }
         // Special case for globals – account for their handles being edited before redirecting back
         $segments = \explode('/', $url);
-        if ($segments[0] ?? null === 'globals') {
+        if (($segments[0] ?? null) === 'globals') {
             if (Craft::$app->getIsMultiSite()) {
                 $siteHandle = $segments[1] ?? null;
                 $globalSetHandle = $segments[2] ?? null;
