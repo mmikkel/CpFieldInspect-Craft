@@ -5,6 +5,8 @@ namespace mmikkel\cpfieldinspect\controllers;
 use Craft;
 use craft\web\Controller;
 
+use mmikkel\cpfieldinspect\CpFieldInspect;
+
 use yii\web\BadRequestHttpException;
 use yii\web\Response;
 
@@ -12,15 +14,16 @@ class DefaultController extends Controller
 {
 
     /**
+     * @return string
      * @throws BadRequestHttpException
      * @throws \yii\base\Exception
      * @throws \yii\base\InvalidConfigException
      */
-    public function actionGetRedirectHash(): Response
+    public function actionGetRedirectHash(): string
     {
         $this->requireCpRequest();
         $this->requirePostRequest();
-        $url = Craft::$app->getRequest()->getRequiredBodyParam('url');
+        $url = $this->request->getRequiredBodyParam('url');
         if (!$url || !\is_string($url) || !$path = \parse_url($url, PHP_URL_PATH)) {
             throw new BadRequestHttpException('Bad URL parameter');
         }
@@ -38,9 +41,7 @@ class DefaultController extends Controller
         if ($hashbang) {
             $redirectTo .= "#{$hashbang}";
         }
-        return $this->asJson([
-            'data' => Craft::$app->getSecurity()->hashData($redirectTo, Craft::$app->getConfig()->getGeneral()->securityKey),
-        ]);
+        return CpFieldInspect::getInstance()->redirect->getRedirectUrl($redirectTo);
     }
 
 }

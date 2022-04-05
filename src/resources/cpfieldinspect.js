@@ -10,8 +10,6 @@
 
     Craft.CpFieldInspectPlugin = {
 
-        elementEditors: {},
-
         settings: {
             settingsClassSelector: 'cp-field-inspect-settings',
             infoClassSelector: 'cp-field-inspect-info',
@@ -34,112 +32,105 @@
             this.data = data;
             this.setPathAndRedirect();
 
-            // Initialize Live Preview support
-            var now = new Date().getTime(),
-                livePreviewPoller = (function getLivePreview() {
-                    if (Craft.livePreview) {
-                        Craft.livePreview.on('enter', this.onLivePreviewEnter.bind(this));
-                        Craft.livePreview.on('exit', this.onLivePreviewExit.bind(this));
-                    } else if (new Date().getTime() - now < 2000) {
-                        Garnish.requestAnimationFrame(livePreviewPoller);
-                    }
-                }).bind(this);
-
-            livePreviewPoller();
-
             // Poll for address bar change
-            var url = null;
+            var url = window.location.href;
             this.addressBarChangeInterval = setInterval(function () {
                 var newUrl = window.location.href;
                 if (newUrl === url) {
                     return;
                 }
                 url = newUrl;
-                try {
-                    Craft.postActionRequest('cp-field-inspect/default/get-redirect-hash', { url: url }, $.proxy(function (response) {
-                        this.data.redirectUrl = response && response.data ? response.data : (this.data.redirectUrl || null);
-                    }, _this));
-                } catch (error) {
-                    console.error(error);
-                }
+                Craft.sendActionRequest('POST', 'cp-field-inspect/default/get-redirect-hash', {
+                    data: {
+                        url: url
+                    }
+                })
+                    .then(function (res) {
+                        if (res.status === 200 && res.data) {
+                            _this.data.redirectUrl = res.data;
+                        }
+                    })
+                    .catch(function (error) {
+                        console.error(error);
+                    });
             }, 100);
 
             // Add event handlers
             Garnish.$doc
                 .on('click', '[data-cpfieldlinks-sourcebtn]', $.proxy(this.onSourceEditBtnClick, this))
-                .on('click', '.matrix .btn.add, .matrix .btn[data-type]', $.proxy(this.onMatrixBlockAddButtonClick, this))
-                .ajaxComplete($.proxy(this.onAjaxComplete, this));
+                .on('click', '.matrix .btn.add, .matrix .btn[data-type]', $.proxy(this.onMatrixBlockAddButtonClick, this));
 
-            Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
-        },
+            // Hack XMLHttpRequest to reload CP Field Inspect on AJAX changes
+            var fnXhrOpen = window.XMLHttpRequest.prototype.open;
+            var fnXhrSend = window.XMLHttpRequest.prototype.send;
 
-        initElementEditor: function () {
-            var now = new Date().getTime(),
-                doInitElementEditor = $.proxy(function () {
-                    var timestamp = new Date().getTime(),
-                        $elementEditor = $('.elementeditor:last'),
-                        $hud = $elementEditor.length > 0 ? $elementEditor.closest('.hud') : false,
-                        elementEditor = $hud && $hud.length > 0 ? $hud.data('elementEditor') : false;
-                    if (elementEditor && elementEditor.hud) {
-                        this.elementEditors[elementEditor._namespace] = elementEditor;
-                        elementEditor.hud.on('hide', $.proxy(this.destroyElementEditor, this, elementEditor));
-                        Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
-                    } else if (timestamp - now < 2000) { // Poll for 2 secs
-                        Garnish.requestAnimationFrame(doInitElementEditor);
-                    }
-                }, this);
-            doInitElementEditor();
-        },
-
-        destroyElementEditor: function (elementEditor) {
-            if (this.elementEditors.hasOwnProperty(elementEditor._namespace)) {
-                delete this.elementEditors[elementEditor._namespace];
+            function onReadyStateChange() {
+                if (this.readyState === 2) {
+                    setTimeout($.proxy(_this.updateEntryTypeButton, _this), 0);
+                } else if (this.readyState === 4) {
+                    setTimeout($.proxy(_this.addFieldLinks, _this), 0);
+                }
+                if (this._onreadystatechange) {
+                    return this._onreadystatechange.apply(this, arguments);
+                }
             }
+
+            function xhrOpen(method, url, async, user, password) {
+                this._url = url;
+                return fnXhrOpen.apply(this, arguments);
+            }
+
+            function xhrSend(data) {
+                if (this.onreadystatechange) {
+                    this._onreadystatechange = this.onreadystatechange;
+                }
+                this.onreadystatechange = onReadyStateChange;
+                return fnXhrSend.apply(this, arguments);
+            }
+
+            window.XMLHttpRequest.prototype.open = xhrOpen;
+            window.XMLHttpRequest.prototype.send = xhrSend;
+            
+            // Add field links
+            Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
         },
 
         setPathAndRedirect: function () {
             var redirectTo = Craft.getLocalStorage(this.settings.redirectKey);
-            if (redirectTo) {
-                var $actionInput = $('input[type="hidden"][name="action"]').filter(this.settings.actionInputKeys.join(','));
-                var $redirectInput = $('input[type="hidden"][name="redirect"]');
-                if ($actionInput.length > 0) {
-                    if ($redirectInput.length > 0) {
-                        $redirectInput.attr('value', redirectTo);
-                    } else {
-                        $actionInput.after('<input type="hidden" name="redirect" value="' + redirectTo +'" />');
-                    }
-                }
-                // Override the new save shortcut behaviour in Craft 3.5.10+
-                var $primaryForm = Craft.cp.$primaryForm;
-                if (
-                    $primaryForm.length &&
-                    Garnish.hasAttr($primaryForm, 'data-saveshortcut') &&
-                    !!Craft.cp.submitPrimaryForm
-                ) {
-                    Garnish.shortcutManager.unregisterShortcut({ keyCode: Garnish.S_KEY, ctrl: true });
-                    Garnish.shortcutManager.registerShortcut({ keyCode: Garnish.S_KEY, ctrl: true }, () => {
-                        Craft.cp.submitPrimaryForm({ redirect: redirectTo, retainScroll: false });
-                    });
-                    var submitBtn = ($primaryForm.find('.btn.submit.menubtn').data() || {}).menubtn || null;
-                    if (submitBtn && submitBtn.menu) {
-                        $(submitBtn.menu.$options[0]).find('span.shortcut').remove();
-                    }
+            Craft.setLocalStorage(this.settings.redirectKey, null);
+            if (!redirectTo) {
+                return;
+            }
+            var $actionInput = $('input[type="hidden"][name="action"]').filter(this.settings.actionInputKeys.join(','));
+            var $redirectInput = $('input[type="hidden"][name="redirect"]');
+            if ($actionInput.length > 0) {
+                if ($redirectInput.length > 0) {
+                    $redirectInput.attr('value', redirectTo);
+                } else {
+                    $actionInput.after('<input type="hidden" name="redirect" value="' + redirectTo +'" />');
                 }
             }
-            Craft.setLocalStorage(this.settings.redirectKey, null);
+            // Override the new save shortcut behaviour in Craft 3.5.10+
+            var $primaryForm = Craft.cp.$primaryForm;
+            if (
+                $primaryForm.length &&
+                Garnish.hasAttr($primaryForm, 'data-saveshortcut') &&
+                !!Craft.cp.submitPrimaryForm
+            ) {
+                Garnish.shortcutManager.unregisterShortcut({ keyCode: Garnish.S_KEY, ctrl: true });
+                Garnish.shortcutManager.registerShortcut({ keyCode: Garnish.S_KEY, ctrl: true }, () => {
+                    Craft.cp.submitPrimaryForm({ redirect: redirectTo, retainScroll: false });
+                });
+                var submitBtn = ($primaryForm.find('.btn.submit.menubtn').data() || {}).menubtn || null;
+                if (submitBtn && submitBtn.menu) {
+                    $(submitBtn.menu.$options[0]).find('span.shortcut').remove();
+                }
+            }
         },
 
         addFieldLinks: function () {
 
-            var targets = [$(this.getFieldContextSelector())];
-
-            if (this.elementEditors && Object.keys(this.elementEditors).length) {
-                for (var key in this.elementEditors) {
-                    if (this.elementEditors.hasOwnProperty(key)) {
-                        targets.push(this.elementEditors[key].$form);
-                    }
-                }
-            }
+            var targets = [$('#main,.lp-editor')];
 
             if (!targets.length) {
                 return;
@@ -229,23 +220,6 @@
             return (this.data.fields || {})[handle] || null;
         },
 
-        getFieldContextSelector: function () {
-            if (this.isLivePreview) {
-                return '.lp-editor';
-            }
-            return '#main';
-        },
-
-        onLivePreviewEnter: function () {
-            this.isLivePreview = true;
-            Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
-        },
-
-        onLivePreviewExit: function () {
-            this.isLivePreview = false;
-            Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
-        },
-
         onSourceEditBtnClick: function (e) {
             e.preventDefault();
             this.doRedirect(e.target.href);
@@ -255,17 +229,14 @@
             Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
         },
 
-        onAjaxComplete: function(e, status, requestData) {
-            if (requestData.url.indexOf('switch-entry-type') === -1) {
+        updateEntryTypeButton: function () {
+            const $entryTypeSelect = $('#entryType');
+            if (!$entryTypeSelect.length) {
                 return;
             }
-            const $entryTypeSelect = $('#entryType');
-            if ($entryTypeSelect.length) {
-                const typeId = $entryTypeSelect.val();
-                $('[data-cpfieldlinks-sourcebtn][data-typeid]:not([data-typeid="' + typeId + '"]').hide();
-                $('[data-cpfieldlinks-sourcebtn][data-typeid="' + typeId + '"]').show();
-            }
-            this.addFieldLinks();
+            const typeId = $entryTypeSelect.val();
+            $('[data-cpfieldlinks-sourcebtn][data-typeid]:not([data-typeid="' + typeId + '"]').hide();
+            $('[data-cpfieldlinks-sourcebtn][data-typeid="' + typeId + '"]').show();
         }
     };
 

@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.0 - 2022-04-05
+
+### Fixed
+- Fixes an issue where CP Field Inspect would not reload field links and element source buttons after AJAX requests (for example, after switching the entry type), on Craft 4.  
+- Fixes an issue where field links would not appear in Preview for newly added Matrix blocks  
+- Fixes an issue where CP Field Inspect failed to redirect back to global sets' edit pages, if the global set's handle was changed via its edit page  
+- Fixes some Craft 4 compatibility issues    
+
+### Added
+- After installation, CP Field Inspect will now set the "Show field handles in edit forms" admin user preference to `true` for all active admin users (but only in environments where `allowAdminChanges` is `true`)
+
+### Improved
+- CP Field Inspect's CSS and JS assets no longer outputs for pages rendered in control panel requests, if the template that rendered was in the site template folder.  
+
+### Changed
+- CP Field Inspect now requires Craft 3.7.x  
+
 ## 1.3.1 - 2022-03-17
 ### Fixed
 - Fixes a minor styling issue for the field settings cogwheels on Craft 3.7.37+ and 4.0.0-beta.2+  
