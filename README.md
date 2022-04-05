@@ -1,16 +1,14 @@
-# CP Field Inspect plugin for Craft CMS 3.x
+# CP Field Inspect plugin for Craft CMS 3.x and 4.x
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mmikkel/CpFieldInspect-Craft/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mmikkel/CpFieldInspect-Craft/?branch=master)
 
-CP Field Inspect is a tiny utility plugin making content modelling a little bit easier in Craft.  
+CP Field Inspect is a tiny utility plugin making content modelling a little bit easier in Craft.    
 
 The plugin adds a little cogwheel link to the field handles in element edit forms. Clicking this link redirects you to the fields' settings pages - and back to your content when you save the settings.  
 
 Additionally, CP Field Inspect will add a link to your element edit forms for easy access to the element's source settings. This enables you to quickly tweak e.g. a entry type's field layout. And just like with the field settings, after saving the source settings CP Field Inspect redirects you back to the element edit page.  
 
 ![Easily inspect field handles and edit fields](resources/img/demo.gif)  
-
-_For Craft 3.0 -> 3.4, CP Field Inspect also adds the actual field handles to the edit forms. Since Craft 3.5 the field handles is added to the edit forms as a core feature, and CP Field Inspect only adds the actual links._
 
 Plugin icon: CUSTOMIZE SEARCH by creative outlet from [the Noun Project](https://thenounproject.com)
 
@@ -24,19 +22,21 @@ CP Field Inspect will only add field settings links and element source buttons t
 
 If any of the above are false, CP Field Inspect will do absolutely nothing.  
 
+_New! Upon installation, CP Field Inspect will automatically enable the "Show field handles in edit forms" admin user preference for all active admin users, in environments that allow admin changes._
+
 ## Requirements
 
-**This plugin requires Craft CMS 3.5.4 or later.**
+**This plugin requires Craft CMS 3.7.0+ or Craft CMS 4.0.0-beta.3 or later.**
 
-If you're on 3.4.2 or later, you should install CP Field Inspect v. 1.1.3:
+If you're running an older version of Craft, you should install these versions:  
 
-    composer require mmikkel/cp-field-inspect:1.1.3  
+Craft CMS 3.5.4+: `composer require mmikkel/cp-field-inspect:1.3.1`  
 
-Older Craft 3.x installs should install CP Field Inspect v. 1.0.7:
+Craft CMS 3.4.2+: `composer require mmikkel/cp-field-inspect:1.1.3`  
 
-    composer require mmikkel/cp-field-inspect:1.0.7  
+Older Craft 3.x installs: `composer require mmikkel/cp-field-inspect:1.0.7`  
 
-Looking for the Craft 2 version? [It's right here](https://github.com/mmikkel/CpFieldLinks-Craft).
+[Looking for the Craft 2 version?](https://github.com/mmikkel/CpFieldLinks-Craft).  
 
 ## Installation
 
@@ -54,7 +54,7 @@ To install the plugin, follow these instructions.
 
 ## Cogwheels not appearing?  
 
-If you're on Craft 3.5.4 or later, make sure the admin user preference "Show field handles in edit forms". If `allowAdminChanges` is `true`, the cogwheels _should_ appear at that point.  
+If you're on Craft 3.5.4 or later, make sure the admin user preference "Show field handles in edit forms" is enabled for your user. If `allowAdminChanges` is `true`, the cogwheels _should_ appear at that point.  
 
 ![The "show field handles" user preference is required](resources/img/show-field-handles-preference.png)  
 
