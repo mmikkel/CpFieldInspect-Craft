@@ -1,4 +1,4 @@
-# CP Field Inspect plugin for Craft CMS 3.x and 4.x
+# CP Field Inspect plugin for Craft CMS
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mmikkel/CpFieldInspect-Craft/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mmikkel/CpFieldInspect-Craft/?branch=master)
 
@@ -26,7 +26,7 @@ _New! Upon installation, CP Field Inspect will automatically enable the "Show fi
 
 ## Requirements
 
-**This plugin requires Craft CMS 3.7.0+ or Craft CMS 4.0.0-beta.3 or later.**
+**This plugin requires Craft CMS 3.7.0+, 4.0.0-beta.4 or later.**
 
 If you're running an older version of Craft, you should install these versions:  
 

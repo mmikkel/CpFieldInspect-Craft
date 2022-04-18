@@ -61,35 +61,31 @@
                 .on('click', '.matrix .btn.add, .matrix .btn[data-type]', $.proxy(this.onMatrixBlockAddButtonClick, this));
 
             // Hack XMLHttpRequest to reload CP Field Inspect on AJAX changes
-            var fnXhrOpen = window.XMLHttpRequest.prototype.open;
             var fnXhrSend = window.XMLHttpRequest.prototype.send;
-
-            function onReadyStateChange() {
-                if (this.readyState === 2) {
-                    setTimeout($.proxy(_this.updateEntryTypeButton, _this), 0);
-                } else if (this.readyState === 4) {
-                    setTimeout($.proxy(_this.addFieldLinks, _this), 0);
+            window.XMLHttpRequest.prototype.send = function (data) {
+                if (data && typeof data === 'string') {
+                    var params = {};
+                    data.replace(/([^=&]+)=([^&]*)/g, function(m, key, value) {
+                        params[decodeURIComponent(key)] = decodeURIComponent(value);
+                    });
+                    if (params.action && ['elements/save-draft', 'entry-revisions/publish-draft'].indexOf(params.action) > -1) {
+                        if (this.onreadystatechange) {
+                            this._cpfieldinspect_onreadystatechange_fn = this.onreadystatechange;
+                        }
+                        this.onreadystatechange = function () {
+                            if (this.readyState === 2) {
+                                setTimeout($.proxy(_this.updateEntryTypeButton, _this), 0);
+                            } else if (this.readyState === 4) {
+                                setTimeout($.proxy(_this.addFieldLinks, _this), 0);
+                            }
+                            if (this._cpfieldinspect_onreadystatechange_fn) {
+                                return this._cpfieldinspect_onreadystatechange_fn.apply(this, arguments);
+                            }
+                        };
+                    }
                 }
-                if (this._onreadystatechange) {
-                    return this._onreadystatechange.apply(this, arguments);
-                }
-            }
-
-            function xhrOpen(method, url, async, user, password) {
-                this._url = url;
-                return fnXhrOpen.apply(this, arguments);
-            }
-
-            function xhrSend(data) {
-                if (this.onreadystatechange) {
-                    this._onreadystatechange = this.onreadystatechange;
-                }
-                this.onreadystatechange = onReadyStateChange;
                 return fnXhrSend.apply(this, arguments);
-            }
-
-            window.XMLHttpRequest.prototype.open = xhrOpen;
-            window.XMLHttpRequest.prototype.send = xhrSend;
+            };
             
             // Add field links
             Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
