@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+### Fixed
+- Fixes an issue where CP Field Inspect could interfere with Plugin Store buy buttons inside the control panel  
+
 ## 1.4.1 - 2022-04-19
 ### Fixed
 - Fixes a potential JavaScript issue where CP Field Inspect could interfere with AJAX requests in the control panel

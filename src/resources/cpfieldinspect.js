@@ -60,35 +60,25 @@
                 .on('click', '[data-cpfieldlinks-sourcebtn]', $.proxy(this.onSourceEditBtnClick, this))
                 .on('click', '.matrix .btn.add, .matrix .btn[data-type]', $.proxy(this.onMatrixBlockAddButtonClick, this));
 
-            // Hack XMLHttpRequest to reload CP Field Inspect on AJAX changes
-            var fnXhrSend = window.XMLHttpRequest.prototype.send;
-            window.XMLHttpRequest.prototype.send = function (data) {
-                if (data && typeof data === 'string') {
-                    var params = {};
-                    data.replace(/([^=&]+)=([^&]*)/g, function(m, key, value) {
-                        params[decodeURIComponent(key)] = decodeURIComponent(value);
-                    });
-                    if (params.action && ['elements/save-draft', 'entry-revisions/publish-draft'].indexOf(params.action) > -1) {
-                        if (this.onreadystatechange) {
-                            this._cpfieldinspect_onreadystatechange_fn = this.onreadystatechange;
-                        }
-                        this.onreadystatechange = function () {
-                            if (this.readyState === 2) {
-                                setTimeout($.proxy(_this.updateEntryTypeButton, _this), 0);
-                            } else if (this.readyState === 4) {
-                                setTimeout($.proxy(_this.addFieldLinks, _this), 0);
-                            }
-                            if (this._cpfieldinspect_onreadystatechange_fn) {
-                                return this._cpfieldinspect_onreadystatechange_fn.apply(this, arguments);
-                            }
-                        };
-                    }
+            if (Craft.DraftEditor) {
+                Garnish.on(Craft.DraftEditor, 'update', function () {
+                    setTimeout($.proxy(_this.update, _this), 0);
+                });
+            } else if (Craft.ElementEditor) {
+                var afterSaveDraftFn = Craft.ElementEditor.prototype._afterSaveDraft;
+                Craft.ElementEditor.prototype._afterSaveDraft = function () {
+                    afterSaveDraftFn.apply(this, arguments);
+                    setTimeout($.proxy(_this.update, _this), 0);
                 }
-                return fnXhrSend.apply(this, arguments);
-            };
-            
+            }
+
             // Add field links
             Garnish.requestAnimationFrame($.proxy(this.addFieldLinks, this));
+        },
+
+        update: function () {
+            this.addFieldLinks();
+            this.updateEntryTypeButton();
         },
 
         setPathAndRedirect: function () {
