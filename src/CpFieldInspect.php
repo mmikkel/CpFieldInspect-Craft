@@ -215,7 +215,6 @@ class CpFieldInspect extends Plugin
 
         $data = [
             'editFieldBtnLabel' => Craft::t('cp-field-inspect', 'Edit field settings'),
-            'baseEditFieldUrl' => \rtrim(UrlHelper::cpUrl('settings/fields/edit'), '/'),
             'redirectUrl' => $this->redirect->getRedirectUrl(),
         ];
 

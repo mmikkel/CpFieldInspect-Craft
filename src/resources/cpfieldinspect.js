@@ -160,7 +160,7 @@
                         return;
                     }
 
-                    var url = Craft.CpFieldInspectPlugin.data.baseEditFieldUrl + '/' + fieldId;
+                    var url = Craft.getCpUrl('settings/fields/edit/' + fieldId);
                     $btn
                         .append('<span data-icon="settings" title="' + (_this.data.editFieldBtnLabel || 'Edit field settings') + '" />')
                         .on('mouseup', '[data-icon="settings"]', function (e) {

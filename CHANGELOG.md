@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.3 - 2022-05-05
+### Fixed  
+- [Craft 4] Fixes an issue where field cogwheels would lead to a 404 on multi-site installs. Fixes #26  
+
 ## 1.4.2 - 2022-04-26
 ### Fixed
 - Fixes an issue where CP Field Inspect could interfere with Plugin Store buy buttons inside the control panel  
