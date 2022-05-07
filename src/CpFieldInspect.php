@@ -25,6 +25,7 @@ use craft\events\PluginEvent;
 use craft\events\TemplateEvent;
 use craft\helpers\UrlHelper;
 use craft\services\Plugins;
+use craft\web\Application;
 use craft\web\Controller;
 use craft\web\View;
 
@@ -83,8 +84,8 @@ class CpFieldInspect extends Plugin
         $request = Craft::$app->getRequest();
         if ($allowAdminChanges && $request->getIsCpRequest() && !$request->getIsConsoleRequest() && !$request->getIsLoginRequest()) {
             Event::on(
-                Plugins::class,
-                Plugins::EVENT_AFTER_LOAD_PLUGINS,
+                Application::class,
+                Application::EVENT_INIT,
                 function () {
                     $this->doIt();
                 }

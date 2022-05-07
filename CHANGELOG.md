@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 1.4.4 - 2022-05-07
+### Changed  
+- CP Field Inspect now defers any element queries to the `craft\web\Application::EVENT_INIT` event, avoiding potential issues with element queries being executed before Craft has fully initialised. Fixes #27.
+
 ## 1.4.3 - 2022-05-05
 ### Fixed  
 - [Craft 4] Fixes an issue where field cogwheels would lead to a 404 on multi-site installs. Fixes #26  
