@@ -1,22 +1,30 @@
 {% if entry ?? null %}
 
-    {% set section = entry.getSection() %}
-    {% set entryTypes = section.getEntryTypes() %}
+    {% set entryTypes = null %}
 
-    {% set label = 'Edit Entry Type'|t('cp-field-inspect') %}
+    {% if entry.sectionId|default %}
+        {% set section = entry.getSection() %}
+        {% set entryTypes = section.getEntryTypes() %}
+    {% elseif entry.typeId|default %}
+        {% set entryTypes = [craft.app.entries.getEntryTypeById(entry.typeId)]|filter %}
+    {% endif %}
 
-    <div class="data" style="padding-top:15px;padding-bottom:20px;" data-cpfieldlinks-sourcebtnwrapper>
-        <p>
-            {% for entryType in entryTypes %}
-                {% apply attr({
-                    'data-typeid': entryType.id,
-                    style: entryType.id != entry.typeId ? 'display:none;' : false
-                }) %}
-                    {% set editUri = 'settings/sections/' ~ section.id ~ '/entrytypes/' ~ entryType.id %}
-                    {% include 'cp-field-inspect/_includes/edit-source-link.twig' %}
-                {% endapply %}
-            {% endfor %}
-        </p>
-    </div>
+    {% if entryTypes %}
+
+        {% set label = 'Edit Entry Type'|t('cp-field-inspect') %}
+
+        <div class="data" style="padding-top:15px;padding-bottom:20px;" data-cpfieldlinks-sourcebtnwrapper>
+            <p>
+                {% for entryType in entryTypes %}
+                    {% set editUri = "settings/entry-types/#{entryType.id}" %}
+                    {{ include('cp-field-inspect/_includes/edit-source-link.twig')|attr({
+                        'data-typeid': entryType.id,
+                        style: entryType.id != entry.typeId ? 'display:none;' : false
+                    }) }}
+                {% endfor %}
+            </p>
+        </div>
+
+    {% endif %}
 
 {% endif %}

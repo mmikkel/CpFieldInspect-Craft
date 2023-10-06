@@ -1,0 +1,21 @@
+[data-cpfieldinspect-inited] span[data-icon="settings"]:hover,
+[data-cpfieldinspect-inited] span[data-icon="settings"]:active {
+    color: #EF4444;
+}
+
+[data-cpfieldinspect-inited].copytextbtn:not(.copytextbtn-expand-l):not(.copytextbtn-expand-r) span[data-icon="settings"] {
+    margin-left: 5px;
+}
+
+.slideout-container .cp-field-inspect-sourcebtn-wrapper {
+    display: none !important;
+}
+
+#details-container .cp-field-inspect-sourcebtn-wrapper {
+    margin-top: 20px;
+    padding-bottom: 20px;
+}
+
+#content.content-pane .cp-field-inspect-sourcebtn-wrapper {
+    margin-top: 30px;
+}

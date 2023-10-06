@@ -1,6 +1,6 @@
 <?php
 /**
- * CP Field Inspect plugin for Craft CMS 3.x
+ * CP Field Inspect plugin for Craft CMS 5.x
  *
  * Inspect field handles and easily edit field settings
  *
@@ -12,27 +12,27 @@ namespace mmikkel\cpfieldinspect;
 
 use Craft;
 use craft\base\Element;
-use craft\base\ElementInterface;
+use craft\base\Field;
 use craft\base\Plugin;
-use craft\commerce\elements\Product;
-use craft\elements\Asset;
-use craft\elements\Category;
 use craft\elements\Entry;
-use craft\elements\GlobalSet;
 use craft\elements\User;
+use craft\events\CreateFieldLayoutFormEvent;
 use craft\events\DefineHtmlEvent;
 use craft\events\PluginEvent;
 use craft\events\TemplateEvent;
-use craft\helpers\UrlHelper;
+use craft\helpers\StringHelper;
+use craft\models\EntryType;
+use craft\models\FieldLayout;
+use craft\models\FieldLayoutTab;
 use craft\services\Plugins;
-use craft\web\Application;
-use craft\web\Controller;
 use craft\web\View;
 
-use mmikkel\cpfieldinspect\services\Redirect;
+use mmikkel\cpfieldinspect\fieldlayoutelements\EditSourceLink;
+use mmikkel\cpfieldinspect\helpers\CpFieldInspectHelper;
+use mmikkel\cpfieldinspect\web\CpFieldInspectBundle;
 
-use yii\base\ActionEvent;
 use yii\base\Event;
+
 
 /**
  * Class CpFieldInspect
@@ -42,7 +42,6 @@ use yii\base\Event;
  *
  * Plugin icon credit: CUSTOMIZE SEARCH by creative outlet from the Noun Project
  *
- * @property Redirect $redirect
  */
 class CpFieldInspect extends Plugin
 {
@@ -52,80 +51,83 @@ class CpFieldInspect extends Plugin
      */
     public function init(): void
     {
+
         parent::init();
 
-        $this->setComponents([
-            'redirect' => Redirect::class,
-        ]);
-
+        // If admin changes are disallowed, we have no purpose.
         $allowAdminChanges = Craft::$app->getConfig()->getGeneral()->allowAdminChanges;
+        if (!$allowAdminChanges) {
+            return;
+        }
 
         // After installation, set the "Show field handles" user preference for active admin users
-        if ($allowAdminChanges) {
-            Event::on(
-                Plugins::class,
-                Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-                function (PluginEvent $event) {
-                    if ($event->plugin !== $this) {
-                        return;
-                    }
-                    $adminUsers = User::find()->admin(true)->status('active')->all();
-                    foreach ($adminUsers as $adminUser) {
+        Event::on(
+            Plugins::class,
+            Plugins::EVENT_AFTER_INSTALL_PLUGIN,
+            function (PluginEvent $event) {
+                if ($event->plugin !== $this) {
+                    return;
+                }
+                $adminUsers = User::find()->admin()->status(User::STATUS_ACTIVE)->all();
+                foreach ($adminUsers as $adminUser) {
+                    try {
                         Craft::$app->getUsers()->saveUserPreferences($adminUser, [
                             'showFieldHandles' => true,
                         ]);
+                    } catch (\Throwable $e) {
+                        Craft::error($e, __METHOD__);
                     }
                 }
-            );
-        }
-
-        // Defer further initialisation to after plugins have loaded
-        // Or, do nothing if admin changes are not allowed, or if this isn't a CP web request
-        $request = Craft::$app->getRequest();
-        if ($allowAdminChanges && $request->getIsCpRequest() && !$request->getIsConsoleRequest() && !$request->getIsLoginRequest()) {
-            Event::on(
-                Application::class,
-                Application::EVENT_INIT,
-                function () {
-                    $this->doIt();
-                }
-            );
-        }
-
-        Craft::info(
-            Craft::t(
-                'cp-field-inspect',
-                '{name} plugin loaded',
-                ['name' => $this->name]
-            ),
-            __METHOD__
+            }
         );
-    }
 
-    // Protected Methods
-    // =========================================================================
+        // At this point, we'll eject if this looks like anything other than a normal CP request
+        $request = Craft::$app->getRequest();
+        if (!$request->getIsCpRequest() || $request->getIsConsoleRequest() || $request->getIsLoginRequest() || !$request->getIsGet()) {
+            return;
+        }
+
+        // Defer further initialisation to after app init
+        Craft::$app->onInit(function () {
+            try {
+                $this->doIt();
+            } catch (\Throwable $e) {
+                Craft::error($e, __METHOD__);
+            }
+        });
+
+    }
 
     /**
      * @return void
-     * @throws \yii\base\Exception
-     * @throws \yii\base\InvalidConfigException
+     * @throws \Throwable
      */
     protected function doIt(): void
     {
 
-        // Do nothing if the user is not an admin
-        if (!Craft::$app->getUser()->getIsAdmin()) {
-            return;
-        }
-
-        // Also do nothing if the user doesn't have field handles visible
+        // Do nothing if the user is not an admin, or if they don't have field handles visible
         /** @var User $user */
         $user = Craft::$app->getUser()->getIdentity();
-        if (!$user->getPreference('showFieldHandles')) {
+        if (!$user?->admin || !$user->getPreference('showFieldHandles')) {
             return;
         }
 
-        $isCraft4 = \version_compare(Craft::$app->getVersion(), '4.0', '>=');
+        // Inject edit source buttons for elements that support the EVENT_DEFINE_META_FIELDS_HTML event
+        Event::on(
+            Element::class,
+            Element::EVENT_DEFINE_META_FIELDS_HTML,
+            function (DefineHtmlEvent $event) {
+                if ($event->static) {
+                    return;
+                }
+                $event->html .= CpFieldInspectHelper::getEditElementSourceButton($event->sender);
+            }
+        );
+
+        // Inject edit source buttons for elements that still use the old template hooks
+        Craft::$app->getView()->hook('cp.globals.edit.content', [CpFieldInspectHelper::class, 'renderEditSourceLink']);
+        Craft::$app->getView()->hook('cp.users.edit.details', [CpFieldInspectHelper::class, 'renderEditSourceLink']);
+        Craft::$app->getView()->hook('cp.commerce.product.edit.details', [CpFieldInspectHelper::class, 'renderEditSourceLink']);
 
         // Register asset bundle
         Event::on(
@@ -135,98 +137,9 @@ class CpFieldInspect extends Plugin
                 if ($event->templateMode !== View::TEMPLATE_MODE_CP) {
                     return;
                 }
-                $this->registerAssetBundle();
+                Craft::$app->getView()->registerAssetBundle(CpFieldInspectBundle::class, View::POS_END);
             }
         );
-
-        // Edit source links
-        if ($isCraft4) {
-
-            // Use the EVENT_DEFINE_META_FIELDS_HTML event to inject source buttons for Craft 4
-            Event::on(
-                Element::class,
-                Element::EVENT_DEFINE_META_FIELDS_HTML,
-                function (DefineHtmlEvent $event) {
-                    if ($event->static) {
-                        return;
-                    }
-                    $event->html .= $this->renderEditSourceLink(['element' => $event->sender]);
-                }
-            );
-
-        } else {
-
-            // Legacy template hooks for entries, assets and categories on Craft 3.x
-            Craft::$app->getView()->hook('cp.entries.edit.meta', [$this, 'renderEditSourceLink']);
-
-            Craft::$app->getView()->hook('cp.assets.edit.meta', [$this, 'renderEditSourceLink']);
-
-            Craft::$app->getView()->hook('cp.categories.edit.details', [$this, 'renderEditSourceLink']);
-
-        }
-
-        // Hooks that still work on both Craft 3.x and 4.x
-        Craft::$app->getView()->hook('cp.globals.edit.content', [$this, 'renderEditSourceLink']);
-
-        Craft::$app->getView()->hook('cp.users.edit.details', [$this, 'renderEditSourceLink']);
-
-        Craft::$app->getView()->hook('cp.commerce.product.edit.details', [$this, 'renderEditSourceLink']);
-
-    }
-
-    /**
-     * @return string
-     * @throws \Twig\Error\LoaderError
-     * @throws \Twig\Error\RuntimeError
-     * @throws \Twig\Error\SyntaxError
-     * @throws \Twig\Error\LoaderError
-     * @throws \yii\base\Exception
-     */
-    public function renderEditSourceLink(array $context): string
-    {
-        $element = $context['element'] ?? $context['entry'] ?? $context['asset'] ?? $context['globalSet'] ?? $context['user'] ?? $context['category'] ?? $context['product'] ?? null;
-        if ($element instanceof Entry) {
-            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-entry-type-link', ['entry' => $element]);
-        }
-        if ($element instanceof Asset) {
-            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-volume-link', ['asset' => $element]);
-        }
-        if ($element instanceof GlobalSet) {
-            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-globalset-link', ['globalSet' => $element]);
-        }
-        if ($element instanceof User) {
-            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-users-link', ['user' => $element]);
-        }
-        if ($element instanceof Category) {
-            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-category-group-link', ['category' => $element]);
-        }
-        if ($element instanceof Product) {
-            return Craft::$app->getView()->renderTemplate('cp-field-inspect/edit-commerce-product-type-link', ['product' => $element]);
-        }
-        return '';
-    }
-
-    /**
-     * @return void
-     * @throws \yii\base\Exception
-     * @throws \yii\base\InvalidConfigException
-     */
-    protected function registerAssetBundle(): void
-    {
-
-        $data = [
-            'editFieldBtnLabel' => Craft::t('cp-field-inspect', 'Edit field settings'),
-            'redirectUrl' => $this->redirect->getRedirectUrl(),
-        ];
-
-        $fields = Craft::$app->getFields()->getAllFields('global');
-
-        foreach ($fields as $field) {
-            $data['fields'][$field->handle] = (int)$field->id;
-        }
-
-        Craft::$app->getView()->registerAssetBundle(CpFieldInspectBundle::class, \yii\web\View::POS_END);
-        Craft::$app->getView()->registerJs('Craft.CpFieldInspectPlugin.init(' . \json_encode($data) . ');', \yii\web\View::POS_END);
 
     }
 

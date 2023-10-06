@@ -1,6 +1,6 @@
 <?php
 /**
- * CP Field Inspect plugin for Craft CMS 3.x
+ * CP Field Inspect plugin for Craft CMS 5.x
  *
  * Inspect field handles and easily edit field settings
  *
