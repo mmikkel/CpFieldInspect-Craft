@@ -3,7 +3,10 @@
     color: #EF4444;
 }
 
-[data-cpfieldinspect-inited].copytextbtn:not(.copytextbtn-expand-l):not(.copytextbtn-expand-r) span[data-icon="settings"] {
+[data-cpfieldinspect-inited].copytextbtn:not(.copytextbtn-expand-l):not(.copytextbtn-expand-r) span.cp-field-inspect {
+    display: flex;
+    align-items: center;
+    margin-top: -1px;
     margin-left: 5px;
 }
 

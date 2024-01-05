@@ -165,7 +165,7 @@
                 $btn.attr('data-cpfieldinspect-inited', true);
 
                 const url = Craft.getCpUrl('settings/fields/edit/' + fieldId);
-                $btn.append(`<span data-icon="settings" role="button" tabindex="0" title="${Craft.t('cp-field-inspect', 'Edit field settings')}" aria-label="${Craft.t('cp-field-inspect', 'Edit field settings')}" />`);
+                $btn.append(`<span class="cp-field-inspect"><span data-icon="settings" role="button" tabindex="0" title="${Craft.t('cp-field-inspect', 'Edit field settings')}" aria-label="${Craft.t('cp-field-inspect', 'Edit field settings')}" /></span>`);
                 $btn
                     .on('mouseup', '[data-icon="settings"]', function (e) {
                         if (e.which === Garnish.PRIMARY_CLICK || e.which === Garnish.SECONDARY_CLICK) {
