@@ -13,6 +13,7 @@ use craft\commerce\elements\Product;
 use craft\helpers\Html;
 use craft\helpers\UrlHelper;
 use craft\models\EntryType;
+use yii\base\InvalidConfigException;
 
 class CpFieldInspectHelper
 {
@@ -46,6 +47,9 @@ class CpFieldInspectHelper
         return Craft::$app->getSecurity()->hashData($url);
     }
 
+    /**
+     * @throws InvalidConfigException
+     */
     public static function renderEditSourceLink(array $context): string
     {
         $element = $context['element'] ?? $context['entry'] ?? $context['asset'] ?? $context['globalSet'] ?? $context['user'] ?? $context['category'] ?? $context['product'] ?? null;
@@ -55,8 +59,18 @@ class CpFieldInspectHelper
         return static::getEditElementSourceButton($element);
     }
 
-    public static function getEditElementSourceButton(ElementInterface $element, array $attributes = [], ?string $size = null): string
+    /**
+     * @param ElementInterface|null $element
+     * @param array $attributes
+     * @param string|null $size
+     * @return string
+     * @throws \yii\base\InvalidConfigException
+     */
+    public static function getEditElementSourceButton(?ElementInterface $element, array $attributes = [], ?string $size = null): string
     {
+        if (empty($element)) {
+            return '';
+        }
         $html = '';
         if ($element instanceof Entry) {
             $typeIds = array_map(static fn (EntryType $entryType) => (int)$entryType->id, $element->getAvailableEntryTypes());
@@ -74,7 +88,9 @@ class CpFieldInspectHelper
         } else if ($element instanceof GlobalSet) {
             $html = static::_getEditSourceButtonHtml('Edit Global Set', "settings/globals/{$element->id}");
         } else if ($element instanceof User) {
-            $html = static::_getEditSourceButtonHtml('Edit Users Settings', 'settings/users/fields');
+            $html = static::_getEditSourceButtonHtml('Edit Users Settings', 'settings/users/fields', [
+                'style' => 'margin-top:20px;',
+            ]);
         } else if ($element instanceof Category) {
             $html = static::_getEditSourceButtonHtml('Edit Category Group', "settings/categories/{$element->groupId}");
         } else if (class_exists(Product::class) && $element instanceof Product) {

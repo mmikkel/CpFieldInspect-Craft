@@ -12,26 +12,19 @@ namespace mmikkel\cpfieldinspect;
 
 use Craft;
 use craft\base\Element;
-use craft\base\Field;
 use craft\base\Plugin;
-use craft\elements\Entry;
 use craft\elements\User;
-use craft\events\CreateFieldLayoutFormEvent;
 use craft\events\DefineHtmlEvent;
 use craft\events\PluginEvent;
 use craft\events\TemplateEvent;
-use craft\helpers\StringHelper;
-use craft\models\EntryType;
-use craft\models\FieldLayout;
-use craft\models\FieldLayoutTab;
 use craft\services\Plugins;
 use craft\web\View;
 
-use mmikkel\cpfieldinspect\fieldlayoutelements\EditSourceLink;
 use mmikkel\cpfieldinspect\helpers\CpFieldInspectHelper;
 use mmikkel\cpfieldinspect\web\CpFieldInspectBundle;
 
 use yii\base\Event;
+use yii\web\View as ViewAlias;
 
 
 /**
@@ -126,7 +119,6 @@ class CpFieldInspect extends Plugin
 
         // Inject edit source buttons for elements that still use the old template hooks
         Craft::$app->getView()->hook('cp.globals.edit.content', [CpFieldInspectHelper::class, 'renderEditSourceLink']);
-        Craft::$app->getView()->hook('cp.users.edit.details', [CpFieldInspectHelper::class, 'renderEditSourceLink']);
         Craft::$app->getView()->hook('cp.commerce.product.edit.details', [CpFieldInspectHelper::class, 'renderEditSourceLink']);
 
         // Register asset bundle
@@ -137,7 +129,7 @@ class CpFieldInspect extends Plugin
                 if ($event->templateMode !== View::TEMPLATE_MODE_CP) {
                     return;
                 }
-                Craft::$app->getView()->registerAssetBundle(CpFieldInspectBundle::class, View::POS_END);
+                Craft::$app->getView()->registerAssetBundle(CpFieldInspectBundle::class, ViewAlias::POS_END);
             }
         );
 
