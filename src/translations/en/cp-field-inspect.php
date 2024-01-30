@@ -22,11 +22,11 @@
  */
 return [
     'CP Field Inspect plugin loaded' => 'CP Field Inspect plugin loaded',
-    'Edit Category Group' => 'Edit Category Group',
-    'Edit Entry Type' => 'Edit Entry Type',
+    'Edit category group' => 'Edit category group',
+    'Edit entry type' => 'Edit entry type',
     'Edit field settings' => 'Edit field settings',
-    'Edit Global Set' => 'Edit Global Set',
-    'Edit Product Type' => 'Edit Product Type',
-    'Edit Users Settings' => 'Edit Users Settings',
-    'Edit Volume' => 'Edit Volume',
+    'Edit global set' => 'Edit global set',
+    'Edit product type' => 'Edit product type',
+    'Edit users settings' => 'Edit users settings',
+    'Edit volume' => 'Edit volume',
 ];

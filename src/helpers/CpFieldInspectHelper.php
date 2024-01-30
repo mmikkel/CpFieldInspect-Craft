@@ -13,6 +13,7 @@ use craft\commerce\elements\Product;
 use craft\helpers\Html;
 use craft\helpers\UrlHelper;
 use craft\models\EntryType;
+
 use yii\base\InvalidConfigException;
 
 class CpFieldInspectHelper
@@ -78,23 +79,23 @@ class CpFieldInspectHelper
                 return '';
             }
             foreach ($typeIds as $typeId) {
-                $html .= static::_getEditSourceButtonHtml('Edit Entry Type', "settings/entry-types/$typeId", [
+                $html .= static::_getEditSourceButtonHtml('Edit entry type', "settings/entry-types/$typeId", [
                     'style' => $typeId !== (int)$element->typeId ? 'display:none;' : false,
                     'data-typeid' => $typeId,
                 ], $size);
             }
         } else if ($element instanceof Asset) {
-            $html = static::_getEditSourceButtonHtml('Edit Volume', "'settings/assets/volumes/{$element->volumeId}");
+            $html = static::_getEditSourceButtonHtml('Edit volume', "'settings/assets/volumes/{$element->volumeId}");
         } else if ($element instanceof GlobalSet) {
-            $html = static::_getEditSourceButtonHtml('Edit Global Set', "settings/globals/{$element->id}");
+            $html = static::_getEditSourceButtonHtml('Edit global set', "settings/globals/{$element->id}");
         } else if ($element instanceof User) {
-            $html = static::_getEditSourceButtonHtml('Edit Users Settings', 'settings/users/fields', [
+            $html = static::_getEditSourceButtonHtml('Edit settings', 'settings/users/fields', [
                 'style' => 'margin-top:20px;',
             ]);
         } else if ($element instanceof Category) {
-            $html = static::_getEditSourceButtonHtml('Edit Category Group', "settings/categories/{$element->groupId}");
+            $html = static::_getEditSourceButtonHtml('Edit category group', "settings/categories/{$element->groupId}");
         } else if (class_exists(Product::class) && $element instanceof Product) {
-            $html = static::_getEditSourceButtonHtml('Edit Product Type', "commerce/settings/producttypes/{$element->typeId}");
+            $html = static::_getEditSourceButtonHtml('Edit product type', "commerce/settings/producttypes/{$element->typeId}");
         }
         if (empty($html)) {
             return '';
