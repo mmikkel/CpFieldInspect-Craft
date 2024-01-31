@@ -71,7 +71,7 @@
                 Garnish.DisclosureMenu.prototype.init = function () {
                     disclosureMenuInitFn.apply(this, arguments);
                     const $trigger = this.$trigger || null;
-                    if (!$trigger) {
+                    if (!$trigger || !$trigger.hasClass('action-btn')) {
                         return;
                     }
                     const $matrixBlock = $trigger.closest('.matrixblock');
