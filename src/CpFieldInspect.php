@@ -14,9 +14,12 @@ use Craft;
 use craft\base\Element;
 use craft\base\Plugin;
 use craft\elements\User;
+use craft\events\DefineElementHtmlEvent;
 use craft\events\DefineHtmlEvent;
 use craft\events\PluginEvent;
 use craft\events\TemplateEvent;
+use craft\helpers\Cp;
+use craft\helpers\Html;
 use craft\services\Plugins;
 use craft\web\View;
 
@@ -74,9 +77,9 @@ class CpFieldInspect extends Plugin
             }
         );
 
-        // At this point, we'll eject if this looks like anything other than a normal CP request
+        // Eject for anything that isn't a CP request
         $request = Craft::$app->getRequest();
-        if (!$request->getIsCpRequest() || $request->getIsConsoleRequest() || $request->getIsLoginRequest() || !$request->getIsGet()) {
+        if (!$request->getIsCpRequest() || $request->getIsConsoleRequest() || $request->getIsLoginRequest()) {
             return;
         }
 
@@ -105,11 +108,36 @@ class CpFieldInspect extends Plugin
             return;
         }
 
+        // Make sure element cards and chips have a [data-type-id] attribute, which we'll use to bootstrap an "Edit Entry Type" link in their settings menus
+        foreach ([
+            Cp::EVENT_DEFINE_ELEMENT_CARD_HTML,
+            Cp::EVENT_DEFINE_ELEMENT_CHIP_HTML,
+        ] as $eventName) {
+            Event::on(
+                Cp::class,
+                $eventName,
+                static function (DefineElementHtmlEvent $event) {
+                    $element = $event->element;
+                    if (empty($element->typeId)) {
+                        return;
+                    }
+                    $event->html = Html::modifyTagAttributes($event->html, [
+                        'data-type-id' => $element->typeId,
+                    ]);
+                }
+            );
+        }
+
+        // At this point, eject for POST and action requests
+        if (!Craft::$app->getRequest()->getIsGet() || Craft::$app->getRequest()->getIsActionRequest()) {
+            return;
+        }
+
         // Inject edit source buttons for elements that support the EVENT_DEFINE_META_FIELDS_HTML event
         Event::on(
             Element::class,
             Element::EVENT_DEFINE_META_FIELDS_HTML,
-            function (DefineHtmlEvent $event) {
+            static function (DefineHtmlEvent $event) {
                 if ($event->static) {
                     return;
                 }
@@ -125,7 +153,7 @@ class CpFieldInspect extends Plugin
         Event::on(
             View::class,
             View::EVENT_BEFORE_RENDER_PAGE_TEMPLATE,
-            function (TemplateEvent $event) {
+            static function (TemplateEvent $event) {
                 if ($event->templateMode !== View::TEMPLATE_MODE_CP) {
                     return;
                 }

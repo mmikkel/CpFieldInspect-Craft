@@ -23,7 +23,7 @@
                 '[value="categories/save-group"]',
                 '[value="volumes/save-volume"]',
                 '[value="users/save-field-layout"]',
-                '[value="commerce/product-types/save-product-type"]',
+                '[value="commerce/product-types/save-product-type"]'
             ]
         },
 
@@ -66,29 +66,13 @@
             // Add event handlers
             Garnish.$doc.on('click', '[data-cpfieldlinks-sourcebtn]', $.proxy(this.onSourceEditBtnClick, this));
 
+            // Init disclosure menus
             if (Garnish.DisclosureMenu) {
-                const disclosureMenuInitFn = Garnish.DisclosureMenu.prototype.init;
-                Garnish.DisclosureMenu.prototype.init = function () {
-                    disclosureMenuInitFn.apply(this, arguments);
-                    const $trigger = this.$trigger || null;
-                    if (!$trigger || !$trigger.hasClass('action-btn')) {
-                        return;
-                    }
-                    const $matrixBlock = $trigger.closest('.matrixblock');
-                    if (!$matrixBlock.length) {
-                        return;
-                    }
-                    const { typeId } = $matrixBlock.data();
-                    if (!typeId) {
-                        return;
-                    }
-                    const $container = this.$container;
-                    if (!$container) {
-                        return;
-                    }
-                    const $editEntryTypeLink = `<li><a href="${Craft.getCpUrl('settings/entry-types/' + typeId)}" data-icon="settings" data-cpfieldlinks-sourcebtn>${Craft.t('cp-field-inspect', 'Edit entry type')}</a></li>`;
-                    $container.find('ul').eq(0).append($editEntryTypeLink);
-                }
+                const disclosureMenuShowFn = Garnish.DisclosureMenu.prototype.show;
+                Garnish.DisclosureMenu.prototype.show = function () {
+                    _this.initDisclosureMenu(this);
+                    disclosureMenuShowFn.apply(this, arguments);
+                };
             }
 
             if (Craft.DraftEditor) {
@@ -100,7 +84,7 @@
                 Craft.ElementEditor.prototype._afterSaveDraft = function () {
                     afterSaveDraftFn.apply(this, arguments);
                     setTimeout($.proxy(_this.update, _this), 0);
-                }
+                };
             }
 
             // Add field links
@@ -189,6 +173,28 @@
                 $(this).blur();
             });
 
+        },
+
+        initDisclosureMenu(disclosureMenu) {
+            console.log('init disclosure menu', this);
+            if (disclosureMenu._hasCpFieldInspectInited) {
+                return;
+            }
+            disclosureMenu._hasCpFieldInspectInited = true;
+            const {$trigger, $container} = disclosureMenu;
+            if (!$trigger || !$container || !$trigger.hasClass('action-btn')) {
+                return;
+            }
+            const $element = $trigger.closest('.matrixblock,.element.card,.element.chip');
+            if (!$element.length) {
+                return;
+            }
+            const {typeId} = $element.data();
+            if (!typeId) {
+                return;
+            }
+            const $editEntryTypeLink = `<li><a href="${Craft.getCpUrl('settings/entry-types/' + typeId)}" data-icon="settings" data-cpfieldlinks-sourcebtn>${Craft.t('cp-field-inspect', 'Edit entry type')}</a></li>`;
+            $container.find('ul').eq(0).append($editEntryTypeLink);
         },
 
         doRedirect: function (href) {
