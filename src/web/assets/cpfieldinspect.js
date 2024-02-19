@@ -210,7 +210,7 @@
         },
 
         onSourceEditBtnClick: function (e) {
-            if (e.which === Garnish.PRIMARY_CLICK || e.which === Garnish.SECONDARY_CLICK) {
+            if (Garnish.isCtrlKeyPressed(e)) {
                 return true;
             }
             e.preventDefault();
