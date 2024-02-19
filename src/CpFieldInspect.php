@@ -104,7 +104,7 @@ class CpFieldInspect extends Plugin
         // Do nothing if the user is not an admin, or if they don't have field handles visible
         /** @var User $user */
         $user = Craft::$app->getUser()->getIdentity();
-        if (!$user?->admin || !$user->getPreference('showFieldHandles')) {
+        if (!$user?->admin) {
             return;
         }
 
