@@ -210,8 +210,12 @@
         },
 
         onSourceEditBtnClick: function (e) {
+            if (e.which === Garnish.PRIMARY_CLICK || e.which === Garnish.SECONDARY_CLICK) {
+                return true;
+            }
             e.preventDefault();
             this.doRedirect(e.target.href);
+            return false;
         },
 
         updateEntryTypeButton: function () {
