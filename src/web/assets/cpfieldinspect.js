@@ -176,7 +176,6 @@
         },
 
         initDisclosureMenu(disclosureMenu) {
-            console.log('init disclosure menu', this);
             if (disclosureMenu._hasCpFieldInspectInited) {
                 return;
             }
