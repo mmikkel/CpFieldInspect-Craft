@@ -75,27 +75,28 @@ class CpFieldInspectHelper
         $html = '';
         if ($element instanceof Entry) {
             $typeIds = array_map(static fn (EntryType $entryType) => (int)$entryType->id, $element->getAvailableEntryTypes());
-            if (empty($typeIds)) {
-                return '';
-            }
             foreach ($typeIds as $typeId) {
                 $html .= static::_getEditSourceButtonHtml('Edit entry type', "settings/entry-types/$typeId", [
                     'style' => $typeId !== (int)$element->typeId ? 'display:none;' : false,
                     'data-typeid' => $typeId,
                 ], $size);
             }
+            $sectionId = $element->sectionId;
+            if (!empty($sectionId)) {
+                $html .= static::_getEditSourceButtonHtml(label: 'Edit section', path: "settings/sections/$sectionId", size: $size);
+            }
         } else if ($element instanceof Asset) {
-            $html = static::_getEditSourceButtonHtml('Edit volume', "'settings/assets/volumes/{$element->volumeId}");
+            $html = static::_getEditSourceButtonHtml(label: 'Edit volume', path: "settings/assets/volumes/{$element->volumeId}", size: $size);
         } else if ($element instanceof GlobalSet) {
-            $html = static::_getEditSourceButtonHtml('Edit global set', "settings/globals/{$element->id}");
+            $html = static::_getEditSourceButtonHtml(label: 'Edit global set', path: "settings/globals/{$element->id}", size: $size);
         } else if ($element instanceof User) {
             $html = static::_getEditSourceButtonHtml('Edit settings', 'settings/users/fields', [
                 'style' => 'margin-top:20px;',
-            ]);
+            ], $size);
         } else if ($element instanceof Category) {
-            $html = static::_getEditSourceButtonHtml('Edit category group', "settings/categories/{$element->groupId}");
+            $html = static::_getEditSourceButtonHtml(label: 'Edit category group', path: "settings/categories/{$element->groupId}", size: $size);
         } else if (class_exists(Product::class) && $element instanceof Product) {
-            $html = static::_getEditSourceButtonHtml('Edit product type', "commerce/settings/producttypes/{$element->typeId}");
+            $html = static::_getEditSourceButtonHtml(label: 'Edit product type', path: "commerce/settings/producttypes/{$element->typeId}", size: $size);
         }
         if (empty($html)) {
             return '';
@@ -103,7 +104,7 @@ class CpFieldInspectHelper
         return Html::tag('div', $html, [
             ...$attributes,
             'class' => [
-                'cp-field-inspect-sourcebtn-wrapper',
+                'cp-field-inspect-sourcebtn-wrapper flex',
                 ...$attributes['class'] ?? [],
             ],
         ]);
