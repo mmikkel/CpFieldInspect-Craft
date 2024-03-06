@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.0-beta.3 - 2024-03-06
+### Changed
+- Reverted the fix in 2.0.0-beta.2, but be more defensive about it.
+
 ## 2.0.0-beta.2 - 2024-03-01
 ### Fixed
 - Fixes an issue where CP Field Inspect could cause a PHP exception

@@ -19,6 +19,7 @@ use craft\events\DefineHtmlEvent;
 use craft\events\PluginEvent;
 use craft\events\TemplateEvent;
 use craft\helpers\Cp;
+use craft\helpers\Html;
 use craft\services\Plugins;
 use craft\web\View;
 
@@ -121,11 +122,9 @@ class CpFieldInspect extends Plugin
                         return;
                     }
                     try {
-                        $html = preg_replace('/<(\w+)(.*?id="[^"]+")([^>]*?)>/', "<$1$2 data-type-id=\"$typeId\"$3>", $event->html, 1);
-                        if (empty($html)) {
-                            return;
-                        }
-                        $event->html = $html;
+                        $event->html = Html::modifyTagAttributes($event->html, [
+                            'data-type-id' => $typeId,
+                        ]);
                     } catch (\Throwable $e) {
                         Craft::error($e, __METHOD__);
                     }
