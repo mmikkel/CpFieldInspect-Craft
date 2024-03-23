@@ -195,7 +195,7 @@
             if (!typeId) {
                 return;
             }
-            const $editEntryTypeLink = `<li><a href="${Craft.getCpUrl('settings/entry-types/' + typeId)}" data-icon="settings" cp-field-inspect-sourcebtn>${Craft.t('cp-field-inspect', 'Edit entry type')}</a></li>`;
+            const $editEntryTypeLink = `<li><a href="${Craft.getCpUrl('settings/entry-types/' + typeId)}" data-icon="settings" data-cp-field-inspect-sourcebtn>${Craft.t('cp-field-inspect', 'Edit entry type')}</a></li>`;
             $container.find('ul').eq(0).append($editEntryTypeLink);
         },
 

@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.0-beta.5 - 2024-04-23
+### Fixed
+- Fixed a regression error introduced in 2.0.0-beta.4, where "Edit entry type" links in element action menus would not result in a redirect back to the current edit page after saving changes.  
+
 ## 2.0.0-beta.4 - 2024-04-23
 ### Fixed
 - Fixed an issue where the "Edit entry type" source button would disappear after editing content [#39](https://github.com/mmikkel/CpFieldInspect-Craft/issues/39) 
