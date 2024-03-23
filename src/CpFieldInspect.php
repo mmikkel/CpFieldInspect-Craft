@@ -122,12 +122,14 @@ class CpFieldInspect extends Plugin
                         return;
                     }
                     try {
-                        $event->html = Html::modifyTagAttributes($event->html, [
+                        $html = Html::modifyTagAttributes($event->html, [
                             'data-type-id' => $typeId,
                         ]);
                     } catch (\Throwable $e) {
                         Craft::error($e, __METHOD__);
+                        return;
                     }
+                    $event->html = $html;
                 }
             );
         }
