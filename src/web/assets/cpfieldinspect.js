@@ -64,7 +64,7 @@
             }, 100);
 
             // Add event handlers
-            Garnish.$doc.on('click', '[data-cpfieldlinks-sourcebtn]', $.proxy(this.onSourceEditBtnClick, this));
+            Garnish.$doc.on('click', '[data-cp-field-inspect-sourcebtn]', $.proxy(this.onSourceEditBtnClick, this));
 
             // Init disclosure menus
             if (Garnish.DisclosureMenu) {
@@ -75,15 +75,11 @@
                 };
             }
 
-            if (Craft.DraftEditor) {
-                Garnish.on(Craft.DraftEditor, 'update', function () {
-                    setTimeout($.proxy(_this.update, _this), 0);
-                });
-            } else if (Craft.ElementEditor) {
+            if (Craft.ElementEditor) {
                 var afterSaveDraftFn = Craft.ElementEditor.prototype._afterSaveDraft;
                 Craft.ElementEditor.prototype._afterSaveDraft = function () {
                     afterSaveDraftFn.apply(this, arguments);
-                    setTimeout($.proxy(_this.update, _this), 0);
+                    setTimeout($.proxy(_this.update, _this, this), 0);
                 };
             }
 
@@ -92,9 +88,9 @@
 
         },
 
-        update: function () {
-            this.addFieldLinks();
-            this.updateEntryTypeButton();
+        update: function (editor) {
+            this.addFieldLinks(editor);
+            this.updateEntryTypeButton(editor);
         },
 
         setPathAndRedirect: function () {
@@ -130,11 +126,18 @@
             }
         },
 
-        addFieldLinks: function () {
+        addFieldLinks: function (editor) {
 
             const _this = this;
 
-            const $copyFieldHandleButtons = $('body').find('.field .heading [id$=-attribute].copytextbtn:not([data-cpfieldinspect-inited])');
+            let $container;
+            if (editor) {
+                $container = editor.$container;
+            } else {
+                $container = $('body');
+            }
+
+            const $copyFieldHandleButtons = $container.find('.field .heading [id$=-attribute].copytextbtn:not([data-cpfieldinspect-inited])');
 
             $copyFieldHandleButtons.each(function () {
 
@@ -192,7 +195,7 @@
             if (!typeId) {
                 return;
             }
-            const $editEntryTypeLink = `<li><a href="${Craft.getCpUrl('settings/entry-types/' + typeId)}" data-icon="settings" data-cpfieldlinks-sourcebtn>${Craft.t('cp-field-inspect', 'Edit entry type')}</a></li>`;
+            const $editEntryTypeLink = `<li><a href="${Craft.getCpUrl('settings/entry-types/' + typeId)}" data-icon="settings" cp-field-inspect-sourcebtn>${Craft.t('cp-field-inspect', 'Edit entry type')}</a></li>`;
             $container.find('ul').eq(0).append($editEntryTypeLink);
         },
 
@@ -218,14 +221,45 @@
             return false;
         },
 
-        updateEntryTypeButton: function () {
-            const $entryTypeSelect = $('#entryType');
-            if (!$entryTypeSelect.length) {
+        updateEntryTypeButton: function (editor) {
+            let $container;
+            if (editor) {
+                $container = editor.$container;
+            } else {
+                $container = $('body');
+            }
+            const $entryTypeInput = $container.find('input[type="hidden"][id$="entryType-input"]').eq(0);
+            if (!$entryTypeInput.length) {
                 return;
             }
-            const typeId = $entryTypeSelect.val();
-            $('[data-cpfieldlinks-sourcebtn][data-typeid]:not([data-typeid="' + typeId + '"]').hide();
-            $('[data-cpfieldlinks-sourcebtn][data-typeid="' + typeId + '"]').show();
+            const currentTypeId = $entryTypeInput.val();
+            if (!currentTypeId) {
+                return;
+            }
+            const _this = this;
+            $container.find('[data-cp-field-inspect-sourcebtn][data-type-id]').each(function () {
+                const { typeId } = this.dataset;
+                if (typeId === currentTypeId) {
+                    return;
+                }
+                this.setAttribute('href', this.getAttribute('href').replace(`settings/entry-types/${typeId}`, `settings/entry-types/${currentTypeId}`));
+                _this.overrideSerializedForm($container);
+            });
+        },
+
+        overrideSerializedForm($form) {
+            setTimeout(() => {
+                const { elementEditor } = $form.data();
+                if (!elementEditor) {
+                    return;
+                }
+                const data = elementEditor.serializeForm(true);
+                if (data === $form.data('initialSerializedValue') && data === elementEditor.lastSerializedValue) {
+                    return;
+                }
+                $form.data('initialSerializedValue', data);
+                elementEditor.lastSerializedValue = data;
+            }, 0);
         }
 
     };

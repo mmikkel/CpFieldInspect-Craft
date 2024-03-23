@@ -74,16 +74,18 @@ class CpFieldInspectHelper
         }
         $html = '';
         if ($element instanceof Entry) {
-            $typeIds = array_map(static fn (EntryType $entryType) => (int)$entryType->id, $element->getAvailableEntryTypes());
-            foreach ($typeIds as $typeId) {
-                $html .= static::_getEditSourceButtonHtml('Edit entry type', "settings/entry-types/$typeId", [
-                    'style' => $typeId !== (int)$element->typeId ? 'display:none;' : false,
-                    'data-typeid' => $typeId,
-                ], $size);
+            if (!empty($element->typeId)) {
+                $html .= static::_getEditSourceButtonHtml(
+                    label: 'Edit entry type',
+                    path: "settings/entry-types/$element->typeId",
+                    attributes: [
+                        'data-type-id' => $element->typeId,
+                    ],
+                    size: $size
+                );
             }
-            $sectionId = $element->sectionId;
-            if (!empty($sectionId)) {
-                $html .= static::_getEditSourceButtonHtml(label: 'Edit section', path: "settings/sections/$sectionId", size: $size);
+            if (!empty($element->sectionId)) {
+                $html .= static::_getEditSourceButtonHtml(label: 'Edit section', path: "settings/sections/$element->sectionId", size: $size);
             }
         } else if ($element instanceof Asset) {
             $html = static::_getEditSourceButtonHtml(label: 'Edit volume', path: "settings/assets/volumes/{$element->volumeId}", size: $size);
@@ -125,7 +127,7 @@ class CpFieldInspectHelper
                 'btn settings icon',
                 $size === 'small' ? 'small' : null,
             ],
-            'data-cpfieldlinks-sourcebtn' => true,
+            'data-cp-field-inspect-sourcebtn' => true,
             ...$attributes,
         ]);
     }
