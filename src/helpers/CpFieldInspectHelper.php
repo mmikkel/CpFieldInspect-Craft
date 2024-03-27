@@ -12,7 +12,6 @@ use craft\elements\User;
 use craft\commerce\elements\Product;
 use craft\helpers\Html;
 use craft\helpers\UrlHelper;
-use craft\models\EntryType;
 
 use yii\base\InvalidConfigException;
 
@@ -45,7 +44,7 @@ class CpFieldInspectHelper
                 $url = "edit/$globalSet->id?site=$siteHandle";
             }
         }
-        return Craft::$app->getSecurity()->hashData($url);
+        return Craft::$app->getSecurity()->/** @scrutinizer ignore-call */hashData($url);
     }
 
     /**
