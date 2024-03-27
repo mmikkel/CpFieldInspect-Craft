@@ -79,7 +79,7 @@ class CpFieldInspect extends Plugin
 
         // Eject for anything that isn't a CP request
         $request = Craft::$app->getRequest();
-        if (!$request->getIsCpRequest() || $request->getIsConsoleRequest() || $request->getIsLoginRequest()) {
+        if (!$request->getIsCpRequest() || $request->getIsLoginRequest()) {
             return;
         }
 

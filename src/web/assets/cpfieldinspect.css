@@ -1,6 +1,6 @@
 [data-cpfieldinspect-inited] span[data-icon="settings"]:hover,
 [data-cpfieldinspect-inited] span[data-icon="settings"]:active {
-    color: #EF4444;
+    color: var(--link-color);
 }
 
 [data-cpfieldinspect-inited].copytextbtn:not(.copytextbtn-expand-l):not(.copytextbtn-expand-r) span.cp-field-inspect {

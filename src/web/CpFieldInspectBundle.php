@@ -1,10 +1,10 @@
 <?php
+
 namespace mmikkel\cpfieldinspect\web;
 
 use Craft;
 use craft\fieldlayoutelements\CustomField;
 use craft\helpers\App;
-use craft\helpers\ConfigHelper;
 use craft\helpers\Json;
 use craft\web\AssetBundle;
 use craft\web\assets\cp\CpAsset;
@@ -61,7 +61,7 @@ class CpFieldInspectBundle extends AssetBundle
             if (window.Craft.CpFieldInspectPlugin) {
                 window.Craft.CpFieldInspectPlugin.init($data);
             }
-JS;
+        JS;
         $view->registerJs($js, View::POS_END);
 
     }
@@ -91,7 +91,7 @@ JS;
             foreach ($fieldLayouts as $fieldLayout) {
                 $customFieldElements += array_reduce(
                     $fieldLayout->getCustomFieldElements(),
-                    static function(array $carry, CustomField $fieldElement) {
+                    static function (array $carry, CustomField $fieldElement) {
                         $fieldId = (int)$fieldElement->getField()?->id;
                         if (!$fieldId) {
                             return $carry;

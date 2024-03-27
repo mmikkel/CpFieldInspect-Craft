@@ -2,7 +2,7 @@
     "name": "mmikkel/cp-field-inspect",
     "description": "Inspect field handles and easily edit field and element source settings",
     "type": "craft-plugin",
-    "version": "2.0.0-beta.5",
+    "version": "2.0.0",
     "keywords": [
         "craft",
         "cms",
@@ -22,11 +22,8 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^5.0.0-beta",
+        "craftcms/cms": "^5.0.0",
         "php": "^8.2"
-    },
-    "require-dev": {
-        "craftcms/rector": "dev-main"
     },
     "minimum-stability": "dev",
     "prefer-stable": true,
