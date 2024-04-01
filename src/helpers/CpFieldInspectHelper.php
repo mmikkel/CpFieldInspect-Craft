@@ -91,9 +91,7 @@ class CpFieldInspectHelper
         } else if ($element instanceof GlobalSet) {
             $html = static::_getEditSourceButtonHtml(label: 'Edit global set', path: "settings/globals/{$element->id}", size: $size);
         } else if ($element instanceof User) {
-            $html = static::_getEditSourceButtonHtml('Edit settings', 'settings/users/fields', [
-                'style' => 'margin-top:20px;',
-            ], $size);
+            $html = static::_getEditSourceButtonHtml(label: 'Edit settings', path: 'settings/users/fields', size: $size);
         } else if ($element instanceof Category) {
             $html = static::_getEditSourceButtonHtml(label: 'Edit category group', path: "settings/categories/{$element->groupId}", size: $size);
         } else if (class_exists(Product::class) && $element instanceof Product) {
