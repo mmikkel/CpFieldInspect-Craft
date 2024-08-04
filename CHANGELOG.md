@@ -4,13 +4,15 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## 2.0.1 - 2024-04-01
+## Unreleased
+### Fixed
+- Fixed a compatibility issue with Craft 5.3, where Link field values' action menus could get add "Edit Entry Type" link added 
 
+## 2.0.1 - 2024-04-01
 ### Fixed
 - Fixed some layout issues in edit pages for element source buttons  
 
 ## 2.0.0 - 2024-03-27  
-
 ### Added
 - Added Craft 5 compatibility
 - Added fully functioning field settings cogwheel buttons to sub fields in inline-editable Matrix fields  
