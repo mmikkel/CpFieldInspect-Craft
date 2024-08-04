@@ -6,7 +6,8 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/) and this p
 
 ## Unreleased
 ### Fixed
-- Fixed a compatibility issue with Craft 5.3, where Link field values' action menus could get add "Edit Entry Type" link added 
+- Fixed a bug where field and source setting links wouldn't appear in element edit forms with validation errors.  
+- Fixed a compatibility issue with Craft 5.3, where Link field values' action menus could get add "Edit Entry Type" link added.  
 
 ## 2.0.1 - 2024-04-01
 ### Fixed

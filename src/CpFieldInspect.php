@@ -134,11 +134,6 @@ class CpFieldInspect extends Plugin
             );
         }
 
-        // At this point, eject for POST and action requests
-        if (!Craft::$app->getRequest()->getIsGet() || Craft::$app->getRequest()->getIsActionRequest()) {
-            return;
-        }
-
         // Inject edit source buttons for elements that support the EVENT_DEFINE_META_FIELDS_HTML event
         Event::on(
             Element::class,
