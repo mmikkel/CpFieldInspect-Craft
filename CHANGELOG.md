@@ -4,6 +4,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
+## 2.0.3 - 2025-01-22
+### Fixed
+- Fixed a minor Craft 5.6 compatibility bug where the "Edit entry type" link could be added to field action menus 
+
 ## 2.0.2 - 2024-08-05
 ### Fixed
 - Fixed a bug where field and source setting links wouldn't appear in element edit forms with validation errors.  
