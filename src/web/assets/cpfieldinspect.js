@@ -184,7 +184,7 @@
             }
             disclosureMenu._hasCpFieldInspectInited = true;
             const {$trigger, $container} = disclosureMenu;
-            if (!$trigger || !$container || !$trigger.hasClass('action-btn') || ['craft\\fields\\Link'].indexOf($trigger.closest('[data-type]').attr('data-type')) > -1) {
+            if (!$trigger || !$container || !$trigger.hasClass('action-btn') || !$trigger.closest('.actions').length || ['craft\\fields\\Link'].indexOf($trigger.closest('[data-type]').attr('data-type')) > -1) {
                 return;
             }
             const $element = $trigger.closest('.matrixblock,.element.card,.element.chip');
