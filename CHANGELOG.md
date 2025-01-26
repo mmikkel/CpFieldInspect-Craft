@@ -4,7 +4,7 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/) and this project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 2.0.4 - 2025-01-26
 ### Fixed
 - Fixed a regression bug introduced in 2.0.3, where the "Edit entry type" link would no longer be added to Matrix entries   
 
