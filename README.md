@@ -2,6 +2,14 @@
 
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/mmikkel/CpFieldInspect-Craft/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/mmikkel/CpFieldInspect-Craft/?branch=master)
 
+## ‼️ CP Field Inspect has been retired!
+
+Since Craft 5.8+, the majority of features provided by CP Field Inspect are now in Craft core 🎉 – making this plugin redundant.
+
+For the time being, I'll make sure things keep working for any upcoming Craft 4.x releases, but installs using Craft 5.8 or later are encouraged to uninstall the plugin.
+
+## About CP Field Inspect
+
 CP Field Inspect is a tiny utility plugin, that makes content modelling a little bit easier in Craft.    
 
 The plugin adds two things to the Craft control panel (hence the first part of the name!):  
